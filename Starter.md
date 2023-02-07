@@ -63,3 +63,15 @@ You can think of [Capacitor](https://capacitorjs.com/) as a sort of "electron fo
 Capacitor provides access to Native APIs and a plugin system for building any native functionality your app needs.
 
 Capacitor apps can also run in the browser as a Progressive Web App with the same code.
+
+## Possible Helpful Links
+How to use next-connect and passport:
+https://github.com/vercel/next.js/tree/canary/examples/with-passport-and-next-connect
+
+Used this to get google to work on local ip
+https://stackoverflow.com/questions/24736168/error-invalid-request-device-id-and-device-name-are-required-for-private-ip
+
+Full next app video:
+https://www.youtube.com/watch?v=bt6CoDj0DN0
+
+
