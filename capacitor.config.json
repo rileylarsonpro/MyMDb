@@ -1,0 +1,16 @@
+{
+  "appId": "com.mymdb.mymdb",
+  "appName": "MyMDb",
+  "bundledWebRuntime": false,
+  "npmClient": "npm",
+  "webDir": "out",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0
+    }
+  },
+  "cordova": {},
+  "server": {
+    "url": "http://10.0.0.5:3000"
+  }
+}
