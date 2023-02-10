@@ -7,6 +7,7 @@ import Home from './Feed';
 import Lists from './Lists';
 import ListDetail from './ListDetail';
 import Settings from './Settings';
+import Register from './Register';
 
 const Tabs = () => {
   return (
@@ -16,6 +17,7 @@ const Tabs = () => {
         <Route path="/tabs/lists" render={() => <Lists />} exact={true} />
         <Route path="/tabs/lists/:listId" render={() => <ListDetail />} exact={true} />
         <Route path="/tabs/settings" render={() => <Settings />} exact={true} />
+        <Route path="/tabs/register" render={() => <Register />} exact={true} />
         <Route path="/tabs" render={() => <Redirect to="/tabs/feed" />} exact={true} />
       </IonRouterOutlet>
       <IonTabBar slot="bottom">
@@ -30,6 +32,10 @@ const Tabs = () => {
         <IonTabButton tab="tab3" href="/tabs/settings">
           <IonIcon icon={cog} />
           <IonLabel>Settings</IonLabel>
+        </IonTabButton>
+        <IonTabButton tab="tab3" href="/tabs/register">
+          <IonIcon icon={cog} />
+          <IonLabel>Register</IonLabel>
         </IonTabButton>
       </IonTabBar>
     </IonTabs>

@@ -16,4 +16,5 @@ const Store = new PullStateStore({
   },
 });
 
+export { default as authStore } from './authStore';
 export default Store;
