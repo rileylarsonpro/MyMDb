@@ -14,6 +14,11 @@ import {
 } from '@ionic/react';
 import { alertCircleOutline } from 'ionicons/icons';
 import { useForm, Controller } from 'react-hook-form';
+import { createAsyncAction, errorResult, successResult } from 'pullstate';
+import Users from '../../api/user.api.js';
+import { CapacitorHttp } from '@capacitor/core'
+import { fb_createUserWithEmailAndPassword, fb_signInWithEmailAndPassword, fb_getIdToken } from '../../firebase-service.js';
+
 
 const Register = () => {
     const {
@@ -68,8 +73,21 @@ const Register = () => {
         },
     ];
 
-    const registerUser = (data) => {
+    const registerUser = async (data) => {
         console.log('creating a new user account with: ', data);
+        //const result = await Users.createAccount(data);
+        // const result = await CapacitorHttp.post({
+        //     url: 'https://10.0.0.5:3004/api/v1/auth/create-account',
+        //     data: data,
+        // })
+        // let result = await fb_createUserWithEmailAndPassword(data.email, data.password);
+        // console.log('result: ', result);
+        // let result2 = await fb_signInWithEmailAndPassword(data.email, data.password);
+        // console.log('result2: ', result2);
+        let res = await fb_getIdToken();
+        console.log('res: ', res);
+        //const res = await Users.getUser()
+        //console.log('res: ', res);
     };
 
     return (

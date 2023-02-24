@@ -74,4 +74,8 @@ https://stackoverflow.com/questions/24736168/error-invalid-request-device-id-and
 Full next app video:
 https://www.youtube.com/watch?v=bt6CoDj0DN0
 
+API Organization
+https://medium.com/@sirpeas/api-endpoints-in-a-react-project-86a7f1572bbc
+
+sending 
 
