@@ -24,8 +24,6 @@ import '../styles/variables.css';
 
 
 
-
-
 function MyApp({ Component, pageProps }) {
   return (
     <>

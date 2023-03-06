@@ -10,13 +10,21 @@ import {
   IonLabel,
 } from '@ionic/react';
 
+import { signOutOfFirebase } from '../../store/authStore';
+
 import Store from '../../store';
 import * as selectors from '../../store/selectors';
 import { setSettings } from '../../store/actions';
 
-const Settings = () => {
-  const settings = Store.useState(selectors.getSettings);
 
+
+const Settings = ({history}) => {
+  const settings = Store.useState(selectors.getSettings);
+  async function signOut() {
+    console.log('signing out');
+    await signOutOfFirebase.run();
+    history.push('/sign-in');
+  }
   return (
     <IonPage>
       <IonHeader>
@@ -38,6 +46,9 @@ const Settings = () => {
               }}
             />
           </IonItem>
+          <ion-item button> 
+            <IonLabel color="primary" onclick={signOut}>Sign out</IonLabel>
+          </ion-item>
         </IonList>
       </IonContent>
     </IonPage>

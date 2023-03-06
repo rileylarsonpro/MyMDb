@@ -14,10 +14,11 @@ import {
 } from '@ionic/react';
 import { alertCircleOutline } from 'ionicons/icons';
 import { useForm, Controller } from 'react-hook-form';
-import { registerWithEmailAndPassword } from '../../store/authStore';
+import { createAsyncAction, errorResult, successResult } from 'pullstate';
 import Users from '../../api/user.api.js';
+import { signInWithEmailAndPassword } from '../../store/authStore';
 
-const Register = ({history}) => {
+const SignIn = ({history}) => {
     const {
         register,
         handleSubmit,
@@ -43,19 +44,6 @@ const Register = ({history}) => {
             },
         },
         {
-            label: 'username',
-            required: true,
-            requiredOptions: {
-                maxLength: 32,
-            },
-            props: {
-                name: 'username',
-                type: 'text',
-                inputmode: 'text',
-                placeholder: 'Enter a username',
-            },
-        },
-        {
             label: 'password',
             required: true,
             requiredOptions: {
@@ -71,27 +59,25 @@ const Register = ({history}) => {
         },
     ];
 
-    const registerUser = async (data) => {
-        await registerWithEmailAndPassword.run(data);
-        console.log('creating a new user account with: ', data);
-        // const res = await Users.getUser();
-        // console.log('res: ', res);
+    const signUserIn = async (data) => {
+        await signInWithEmailAndPassword.run(data);
+        history.push('/tabs/feed');
     };
 
     return (
         <IonPage>
             <IonHeader>
                 <IonToolbar>
-                    <IonTitle>Create Account</IonTitle>
+                    <IonTitle>Sign In</IonTitle>
                 </IonToolbar>
             </IonHeader>
             <IonContent className="ion-padding" fullscreen>
                 <IonHeader collapse="condense">
                     <IonToolbar>
-                        <IonTitle size="large">Create Account</IonTitle>
+                        <IonTitle size="large">Sign In</IonTitle>
                     </IonToolbar>
                 </IonHeader>
-                <form className="max-w-xl mx-auto my-4" onSubmit={handleSubmit(registerUser)}>
+                <form className="max-w-xl mx-auto my-4" onSubmit={handleSubmit(signUserIn)}>
                     {fields.map((field, index) => {
                         const { label, required, requiredOptions, props } = field;
 
@@ -151,60 +137,26 @@ const Register = ({history}) => {
                             </IonItem>
                         );
                     })}
-                    <IonItem>
-                        <>
-                            <IonLabel
-                                position={errors['acceptTerms'] ? 'stacked' : ''}
-                                class="ion-text-wrap"
-                            >
-                                <div className="flex items-center">
-                                    I agree to the terms and conditions and the privacy policy
-                                    {errors['acceptTerms'] && (
-                                        <IonIcon
-                                            className="pl-1"
-                                            icon={alertCircleOutline}
-                                            color="danger"
-                                            slot="end"
-                                        />
-                                    )}
-                                </div>
-                            </IonLabel>
-                            <IonCheckbox
-                                name="acceptTerms"
-                                type="checkbox"
-                                checked="false"
-                                {...register('acceptTerms', { required: true })}
-                                id="acceptTerms"
-                                slot="end"
-                            />
-                            {errors['acceptTerms'] && (
-                                <IonText color="danger">
-                                    <p className="ion-padding-start">You must agree to the terms</p>
-                                </IonText>
-                            )}
-                        </>
-                    </IonItem>
                     <IonButton expand="block" type="submit" className="ion-margin-top">
-                        Register
+                        Sign In
                     </IonButton>
                     <IonItem lines="none" className="ion-margin-top">
-                        <IonLabel>
-                            <p className="text-center">
-                                Already have an account?{' '}
-                                <span
-                                    className="text-blue-500 cursor-pointer"
-                                    onClick={() => history.push('/sign-in')}
-                                >
-                                    Sign in.
-                                </span>
-                            </p>
-                        </IonLabel>
-                    </IonItem>
+                    <IonLabel>
+                        <p className="text-center">
+                            Don't have an account?{' '}
+                            <span
+                                className="text-blue-500 cursor-pointer"
+                                onClick={() => history.push('/register')}
+                            >
+                                Create one.
+                            </span>
+                        </p>
+                    </IonLabel>
+                </IonItem>
                 </form>
-                
             </IonContent>
         </IonPage>
     );
 };
 
-export default Register;
+export default SignIn;

@@ -8,3 +8,4 @@ export const getNotifications = createSelector(getState, state => state.notifica
 export const getSettings = createSelector(getState, state => state.settings);
 
 export const getUser = createSelector(getState, state => state.user);
+export const getLoggedIn = createSelector(getState, state => state.loggedIn);

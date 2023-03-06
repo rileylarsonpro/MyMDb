@@ -4,7 +4,8 @@ const apiClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_ORIGIN_NATIVE, // <- ENV variable
 });
 apiClient.interceptors.request.use(async (config) => {
-  config.headers.token = await fb_getIdToken();
+  const token = await fb_getIdToken();
+  config.headers.Authorization = `Bearer ${token}`;
   return config;
 },
   error => Promise.reject(error),
