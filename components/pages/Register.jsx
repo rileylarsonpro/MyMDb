@@ -15,9 +15,10 @@ import {
 import { alertCircleOutline } from 'ionicons/icons';
 import { useForm, Controller } from 'react-hook-form';
 import { registerWithEmailAndPassword } from '../../store/authStore';
-import Users from '../../api/user.api.js';
+import { useToast } from '../useToast.tsx';
 
 const Register = ({history}) => {
+    const toast = useToast();
     const {
         register,
         handleSubmit,
@@ -72,10 +73,12 @@ const Register = ({history}) => {
     ];
 
     const registerUser = async (data) => {
-        await registerWithEmailAndPassword.run(data);
-        console.log('creating a new user account with: ', data);
-        // const res = await Users.getUser();
-        // console.log('res: ', res);
+        const result = await registerWithEmailAndPassword.run(data);
+        if (result.error) {
+            toast.error(result.message);
+            return;
+        }
+        history.push('/tabs/feed');
     };
 
     return (

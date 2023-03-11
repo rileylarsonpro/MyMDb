@@ -17,8 +17,10 @@ import { useForm, Controller } from 'react-hook-form';
 import { createAsyncAction, errorResult, successResult } from 'pullstate';
 import Users from '../../api/user.api.js';
 import { signInWithEmailAndPassword } from '../../store/authStore';
+import { useToast } from '../useToast.tsx';
 
 const SignIn = ({history}) => {
+    const toast = useToast();
     const {
         register,
         handleSubmit,
@@ -60,7 +62,11 @@ const SignIn = ({history}) => {
     ];
 
     const signUserIn = async (data) => {
-        await signInWithEmailAndPassword.run(data);
+        const result = await signInWithEmailAndPassword.run(data);
+        if (result.error) {
+            toast.error(result.message);
+            return;
+        }
         history.push('/tabs/feed');
     };
 

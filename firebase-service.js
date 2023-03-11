@@ -29,7 +29,6 @@ export const APP = getApps().length === 0 ? initializeApp(firebaseConfig) : getA
 
 if (Capacitor.isNativePlatform()) {
   // require to work appropriately on native devices
-  console.log("native");
   initializeAuth(APP, {
     persistence: indexedDBLocalPersistence,
   });
@@ -96,14 +95,17 @@ export const fb_createUserWithEmailAndPassword = async (
   password
 ) => {
   const result = await FirebaseAuthentication.createUserWithEmailAndPassword({email, password});
-  console.log("result", result);
   return result.user;
 }
   
 export const fb_getIdToken = async () => {
-  await newGetUser();
-  const result = await FirebaseAuthentication.getIdToken();
-  return result.token;
+  try {
+    const result = await FirebaseAuthentication.getIdToken();
+    return result.token;
+  } catch (e) {
+    console.log(e);
+    return '';
+  }
 }
 
 export const fb_getCurrentUser = async () => {

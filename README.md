@@ -36,9 +36,7 @@ User
 |--------------|---------------|
 | _id          | ObjectId      |
 | username     | String        |
-| profilePhoto | String        |
-| password     | String HASHED |
-| loggedIn     | Boolean       |
+| firebaseId   | String        |
 
 Media
 | Property     | Type                                                                                                                                           |

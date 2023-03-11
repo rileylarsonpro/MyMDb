@@ -4,8 +4,9 @@ import { StatusBar, Style } from '@capacitor/status-bar';
 import { IonReactRouter } from '@ionic/react-router';
 import { Redirect, Route } from 'react-router-dom';
 import { getFirebaseUser, authStore } from '../store/authStore.js';
-
 import { useEffect, useState } from 'react';
+
+import { ToastProvider } from '../components/useToast.tsx';
 
 
 
@@ -36,24 +37,29 @@ const AppShell = () => {
   </IonApp>;
 
   if(!result.payload) return <IonApp>
-    <IonReactRouter>
-      <IonRouterOutlet id="main">
-          <Route path="/register" render={(props) => <Register {...props}/>} exact={true}/>
-          <Route path="/sign-in" render={(props) => <SignIn {...props}/>} exact={true}/>
-          <Route render={() => <Redirect to="/sign-in" />} />
-      </IonRouterOutlet>
-    </IonReactRouter>
+    <ToastProvider value={{ color: 'danger', duration: 2000}}>
+      <IonReactRouter>
+        <IonRouterOutlet id="main">
+            <Route path="/register" render={(props) => <Register {...props}/>} exact={true}/>
+            <Route path="/sign-in" render={(props) => <SignIn {...props}/>} exact={true}/>
+            <Route render={() => <Redirect to="/sign-in" />} />
+        </IonRouterOutlet>
+      </IonReactRouter>
+    </ToastProvider>
   </IonApp>;
   
           
   return (
     <IonApp>
-      <IonReactRouter>
-        <IonRouterOutlet id="main">
-          <Route path="/tabs" render={() => <Tabs />} />
-          <Route path="/" render={() => <Redirect to="/tabs/feed" />} exact={true}/>
-        </IonRouterOutlet>
-      </IonReactRouter>
+      <ToastProvider value={{ color: 'danger', duration: 2000}}>
+        <IonReactRouter>
+          <IonRouterOutlet id="main">
+            <Route path="/tabs" render={() => <Tabs />} />
+            <Route path="/" render={() => <Redirect to="/tabs/feed" />} exact={true}/>
+            <Route render={() => <Redirect to="/tabs/feed" />} />
+          </IonRouterOutlet>
+        </IonReactRouter>
+      </ToastProvider>
     </IonApp>
   );
 };

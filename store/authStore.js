@@ -14,6 +14,8 @@ import {
     fb_getIdToken,
 } from '../firebase-service';
 
+import userApi from '../api/user.api.js';
+
 export const authStore = new Store({
     user: null,
     loggedIn: false,
@@ -44,37 +46,44 @@ export const getFirebaseUser = createAsyncAction(
     }
 );
 
-export const registerWithEmailAndPassword = createAsyncAction(async ({ email, password }) => {
-    console.log('register');
-
-    // check api for username and email
-    // if exists, return error
-    // else, create user
-    const user = await fb_createUserWithEmailAndPassword(email, password);
-    getFirebaseUser.clearAllCache();
-    await getFirebaseUser.run();
-    return successResult(user);
+export const registerWithEmailAndPassword = createAsyncAction(async ({ email, password, username }) => {
+    try {
+        // check api for username and email
+        let { data: account} = await userApi.checkForAccount({ email, username })
+        if (account.accountExists) {
+            return errorResult([], account.message);
+        }
+        let user = await fb_createUserWithEmailAndPassword(email, password);
+        getFirebaseUser.clearAllCache();
+        await getFirebaseUser.run();
+        await userApi.createAccount({ email, username });
+        return successResult(user);
+    } catch (e) {
+        console.log(e);
+        return errorResult([], "Registration failed");
+    }
 });
 
 export const getIdToken = createAsyncAction(async () => {
     const token = await fb_getIdToken();
-    console.log('gettingToken', token);
     if (token) {
         return successResult(token);
     }
-    return errorResult('No token');
+    return errorResult([], 'No token');
 });
 
 export const signInWithEmailAndPassword = createAsyncAction(async ({ email, password }) => {
-    console.log('signIn');
-    const user = await fb_signInWithEmailAndPassword(email, password);
-    getFirebaseUser.clearAllCache();
-    await getFirebaseUser.run();
-    return successResult(user);
+    try {
+        const user = await fb_signInWithEmailAndPassword(email, password);
+        getFirebaseUser.clearAllCache();
+        await getFirebaseUser.run();
+        return successResult(user);
+    } catch (e) {
+        return errorResult([], "Email or password is incorrect");
+    }
 });
 
 export const signOutOfFirebase = createAsyncAction(async () => {
-    console.log('signOut');
     await fb_signOut();
     getFirebaseUser.clearAllCache();
     await getFirebaseUser.run();

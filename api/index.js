@@ -5,6 +5,7 @@ const apiClient = axios.create({
 });
 apiClient.interceptors.request.use(async (config) => {
   const token = await fb_getIdToken();
+  if (!token) return config;
   config.headers.Authorization = `Bearer ${token}`;
   return config;
 },

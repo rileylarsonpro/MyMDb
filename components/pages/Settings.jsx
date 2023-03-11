@@ -21,7 +21,6 @@ import { setSettings } from '../../store/actions';
 const Settings = ({history}) => {
   const settings = Store.useState(selectors.getSettings);
   async function signOut() {
-    console.log('signing out');
     await signOutOfFirebase.run();
     history.push('/sign-in');
   }
