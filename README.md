@@ -80,3 +80,6 @@ Log
 | updatedAt  | TimeStamp  |
 | containsSpoilers | Boolean |
 | comments | [ {user: ObjectId, text: String}] |
+
+
+&copy; Riley Larson 2023
