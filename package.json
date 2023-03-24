@@ -10,7 +10,8 @@
     "build": "next build",
     "start": "next start",
     "export": "next export",
-    "serve": "next build && next export"
+    "serve": "next build && next export",
+    "cordova-res": "cordova-res ios --skip-config --copy --type icon"
   },
   "dependencies": {
     "@capacitor-firebase/authentication": "^1.3.0",
@@ -33,6 +34,7 @@
   "devDependencies": {
     "@capacitor/cli": "^4.0.0",
     "autoprefixer": "^10.4.14",
+    "cordova-res": "^0.15.4",
     "eslint": "^7.28.0",
     "eslint-config-next": "^11.0.0",
     "ionicons": "^6.0.3",

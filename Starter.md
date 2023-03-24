@@ -79,3 +79,5 @@ https://medium.com/@sirpeas/api-endpoints-in-a-react-project-86a7f1572bbc
 
 sending 
 
+NOTE: Remove cordova res when done with images
+https://ionic.io/blog/how-to-change-your-ios-app-icon-with-capacitor
