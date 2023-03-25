@@ -5,7 +5,7 @@ import { tvOutline, happyOutline, ticketOutline } from 'ionicons/icons';
 import { searchMulti } from '../../store/mediaStore'
 
 
-const SearchBar = ({}) => {
+const SearchBar = ({history}) => {
   const [finished, result, updating] = searchMulti.useWatch({cacheBreakEnabled: true, ssr: false}); 
   const data = [];
   let [results, setResults] = useState([...data]);
@@ -13,10 +13,7 @@ const SearchBar = ({}) => {
   const handleChange = async (ev) => {
     const query = ev.target.value;
     let res = await searchMulti.run({query});
-    setResults(res.payload);
-  }
-  const handleClick = (result) => {
-    console.log(result);  
+    if (res.payload?.length > 0) setResults(res.payload);
   }
 
   return (
@@ -24,8 +21,8 @@ const SearchBar = ({}) => {
       <IonSearchbar debounce={500} onIonChange={(ev) => handleChange(ev)}></IonSearchbar>
 
       <IonList>
-        { results.map(result => (
-          <IonItem key={result.id} button detail={false} onClick={() => handleClick(result)}>
+        { results.map((result,index) => (
+          <IonItem key={index} button detail={false} routerLink={`/tabs/details/${result.media_type}/${result.id}`}>
             <IonThumbnail className="h-24 w-16 my-1.5 mr-3">
               { result.poster_path ? 
               <IonImg src={`https://image.tmdb.org/t/p/w154${result.poster_path}`} alt=""/> : 

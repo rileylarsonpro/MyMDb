@@ -64,8 +64,15 @@ Log
 | Property   | Type       |
 |------------|------------|
 | _id        | ObjectId   |
-| tmdbId     | String     |
-| movieId    | ObjectId   |
+| tmdbId     | [String]   |
+| name       | String     |
+| poster     | String     |
+| year       | number     | 
+| logType    | 'movie', 'tv show', 'tv season', 'tv episode' |
+| movieId    | number, Null|
+| tvId       | number, Null|
+| tvSeason   | number, Null|
+| tvEpisodes | [number]   |
 | userId     | ObjectId   |
 | rating     | Number     |
 | Liked      | Boolean    |

@@ -11,7 +11,7 @@ import {
 
 import SearchBar from '../ui/SearchBar.jsx';
 
-const Search = () => {
+const Search = (props) => {
   return (
     <IonPage>
       <IonHeader translucent={true}>
@@ -25,7 +25,7 @@ const Search = () => {
             <IonTitle size="large">Search</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <SearchBar />
+        <SearchBar {...props}/>
       </IonContent>
     </IonPage>
   );
