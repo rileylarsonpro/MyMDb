@@ -16,8 +16,11 @@ import {
 import { useEffect, useState } from 'react';
 import { getDetails } from '../../store/mediaStore';
 import { CreateAnimation, Animation } from '@ionic/react';
+import LogTv from '../ui/LogTv';
+import Loading from '../ui/Loading';
 
 const Details = (props) => {
+    const [finished, setFinished] = useState(false);
     const [details, setDetails] = useState(null);
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
     const { id, mediaType } = props.match.params;
@@ -27,8 +30,10 @@ const Details = (props) => {
             console.log(res.payload);
             setDetails(res.payload);
             setWindowWidth(window.innerWidth);
+            setFinished(true);
         });
     }, [id]);
+
 
     function getImageSize() {
         if (windowWidth > 768) {
@@ -45,7 +50,7 @@ const Details = (props) => {
         let minutes = min % 60;
         return `${hours}h ${minutes}m`;
     }
-
+    if (!finished) return <Loading />;
     return (
         <IonPage>
             <IonContent fullscreen={true}>
@@ -64,38 +69,40 @@ const Details = (props) => {
                     <IonRow>
                         {details?.release_date && (
                             <IonCol>
-                                <IonChip color="primary">
+                                <IonChip className="pointer-events-none" color="primary">
                                     {details?.release_date.substring(0, 4)}
                                 </IonChip>
                             </IonCol>
                         )}
                         {details?.first_air_date && (
                             <IonCol>
-                                <IonChip color="primary">
+                                <IonChip className="pointer-events-none" color="primary">
                                     {details?.first_air_date.substring(0, 4)}
                                 </IonChip>
                             </IonCol>
                         )}
                         {details?.runtime && (
                             <IonCol>
-                                <IonChip color="primary">
+                                <IonChip className="pointer-events-none" color="primary">
                                     {convertMinToReadableTime(details?.runtime)}
                                 </IonChip>
                             </IonCol>
                         )}
                         {details?.number_of_seasons && (
                             <IonCol>
-                                <IonChip color="primary">
+                                <IonChip className="pointer-events-none" color="primary">
                                     {details?.number_of_seasons} Seasons
                                 </IonChip>
                             </IonCol>
                         )}
                         {details?.content_rating && (
                             <IonCol>
-                                <IonChip color="primary">{details?.content_rating}</IonChip>
+                                <IonChip className="pointer-events-none" color="primary">{details?.content_rating}</IonChip>
                             </IonCol>
                         )}
                     </IonRow>
+                    { mediaType === 'tv' && <LogTv details={details} {...props} /> }
+                          
                 </IonGrid>
             </IonContent>
         </IonPage>

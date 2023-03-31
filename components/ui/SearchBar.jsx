@@ -11,6 +11,7 @@ const SearchBar = ({history}) => {
   let [results, setResults] = useState([...data]);
 
   const handleChange = async (ev) => {
+    if(!ev.target.value) return;
     const query = ev.target.value;
     let res = await searchMulti.run({query});
     if (res.payload?.length > 0) setResults(res.payload);
@@ -22,7 +23,7 @@ const SearchBar = ({history}) => {
 
       <IonList>
         { results.map((result,index) => (
-          <IonItem key={index} button detail={false} routerLink={`/tabs/details/${result.media_type}/${result.id}`}>
+          <IonItem key={index} button detail={false} routerLink={`/tabs/search/details/${result.media_type}/${result.id}`}>
             <IonThumbnail className="h-24 w-16 my-1.5 mr-3">
               { result.poster_path ? 
               <IonImg src={`https://image.tmdb.org/t/p/w154${result.poster_path}`} alt=""/> : 
