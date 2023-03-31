@@ -19,52 +19,154 @@ import {
     IonAccordion,
     IonAccordionGroup,
     IonCheckbox,
-    IonTextarea
+    IonTextarea,
 } from '@ionic/react';
 import { closeOutline } from 'ionicons/icons';
+import ReactQuill from 'react-quill';
 
 import { searchMulti } from '../../store/mediaStore';
 
-const LogForm = ({ rating, liked, reviewText, noteText, isPrivate, containsSpoilers, tags }) => {
-    return(
-    <Card className="my-4 mx-auto">
-      <div className="h-32 w-full relative">
-        <img className="rounded-t-xl object-cover min-w-full min-h-full max-w-full max-h-full" src={image} alt="" />
-      </div>
-      <div className="px-4 py-4 bg-white rounded-b-xl dark:bg-gray-900">
-        <h4 className="font-bold py-0 text-s text-gray-400 dark:text-gray-500 uppercase">{type}</h4>
-        <h2 className="font-bold text-2xl text-gray-800 dark:text-gray-100">{title}</h2>
-        <p className="sm:text-sm text-s text-gray-500 mr-1 my-3 dark:text-gray-400">{text}</p>
-        <div className="flex items-center space-x-4">
-          <div className="w-10 h-10 relative">
-            <img src={authorAvatar} className="rounded-full object-cover min-w-full min-h-full max-w-full max-h-full" alt="" />
-          </div>
-          <h3 className="text-gray-500 dark:text-gray-200 m-l-8 text-sm font-medium">{author}</h3>
-        </div>
-      </div>
-    </Card>)
+const LogForm = ({
+    episode,
+    rating: initRating,
+    liked: initLiked,
+    reviewText: initReviewText,
+    noteText: initNoteText,
+    isPrivate: initIsPrivate,
+    containsSpoilers: initContainsSpoilers,
+    tags: initTags,
+    handleChange,
+}) => {
+    const [rating, setRating] = useState(initRating);
+    const [liked, setLiked] = useState(initLiked);
+    const [reviewText, setReviewText] = useState(initReviewText);
+    const [reviewExpanded, setReviewExpanded] = useState(false);
+    const [noteText, setNoteText] = useState(initNoteText);
+    const [noteExpanded, setNoteExpanded] = useState(false);
+    const [isPrivate, setIsPrivate] = useState(initIsPrivate);
+    const [containsSpoilers, setContainsSpoilers] = useState(initContainsSpoilers);
+    const [tags, setTags] = useState(initTags);
+    const formats = ['bold', 'italic', 'underline', 'list', 'bullet', 'link'];
+    const reviewModules = {
+        toolbar: { container: `#toolbar-${episode}-review` },
+    };
+    const notesModules = {
+        toolbar: { container: `#toolbar-${episode}-notes` },
+    };
+    useEffect(() => {
+        if (reviewExpanded) {
+            setNoteExpanded(false);
+        }
+    }, [reviewExpanded])
+
+    useEffect(() => {
+        if (noteExpanded) {
+            setReviewExpanded(false);
+        }
+    }, [noteExpanded])
+
+    useEffect(() => {
+        const log = {
+            episode: episode,
+            rating: rating,
+            liked: liked,
+            reviewText: reviewText,
+            noteText: noteText,
+            isPrivate: isPrivate,
+            containsSpoilers: containsSpoilers,
+            tags: tags,
+        };
+        handleChange(log);
+    }, [rating, liked, reviewText, noteText, isPrivate, containsSpoilers, tags]);
+    return (
+        <>
+            <div className="mx-5 my-1">
+                <IonLabel position="stacked">Review</IonLabel>
+                <ReactQuill
+                    id={`review-${episode}`}
+                    theme="snow"
+                    value={rating}
+                    onChange={setRating}
+                    formats={formats}
+                    modules={reviewModules}
+                    onFocus={() => setReviewExpanded(true)}
+                    className={reviewExpanded && 'h-40'}
+                />
+                <div id={`toolbar-${episode}-review`}>
+                    <button className="ql-bold">b</button>
+                    <button className="ql-italic">i</button>
+                    <button className="ql-underline">u</button>
+                    <button className="ql-list" value="ordered"></button>
+                    <button className="ql-list" value="bullet"></button>
+                    <button className="ql-link">link</button>
+                </div>
+                <IonLabel position="stacked">Notes (Private)</IonLabel>
+                <ReactQuill
+                    id={`notes-${episode}`}
+                    theme="snow"
+                    value={noteText}
+                    onChange={setNoteText}
+                    formats={formats}
+                    modules={notesModules}
+                    onFocus={() => setNoteExpanded(true)}
+                    className={noteExpanded && 'h-40'}
+                />
+                <div id={`toolbar-${episode}-notes`}>
+                    <button className="ql-bold">b</button>
+                    <button className="ql-italic">i</button>
+                    <button className="ql-underline">u</button>
+                    <button className="ql-list" value="ordered"></button>
+                    <button className="ql-list" value="bullet"></button>
+                    <button className="ql-link">link</button>
+                </div>
+            </div>
+        </>
+    );
 };
 
-
+function getEpisodeString(episode) {
+    return `S${episode.season_number}E${episode.episode_number}`;
+}
 
 const Log = ({ selectedType, selected }) => {
+    const [logs, setLogs] = useState(() => {
+        let map = new Map();
+        selected.forEach((episode) => {
+            map.set(getEpisodeString(episode), {
+                episode: getEpisodeString(episode),
+                rating: 0,
+                liked: false,
+                reviewText: '',
+                noteText: '',
+                isPrivate: true,
+                containsSpoilers: false,
+                tags: [],
+            });
+        });
+        return map;
+    });
+    console.log("logs", logs)
+    function handleChange(log) {
+        setLogs(new Map(logs.set(log.episode, log)));
+    }
     return (
         <IonContent>
             {selectedType === 'episodes' && selected.length > 0 && (
-                    <IonAccordionGroup multiple={true}>
-                        {selected.map((episode, index) => (
-                            <IonAccordion key={index}>
+                <IonAccordionGroup multiple={true}>
+                    {selected.map((episode, index) => (
+                        <IonAccordion key={index}>
                             <IonItem slot="header">
-                                <IonLabel>S{episode.season_number}E{episode.episode_number} {episode.name}</IonLabel>
+                                <IonLabel>
+                                    {getEpisodeString(episode)} {episode.name}
+                                </IonLabel>
                             </IonItem>
                             <IonList slot="content">
-                                content
+                                <LogForm {...logs.get(getEpisodeString(episode))} handleChange={handleChange}/>
                             </IonList>
                         </IonAccordion>
-                            
-                        ))}
-                    </IonAccordionGroup>
-                )}
+                    ))}
+                </IonAccordionGroup>
+            )}
         </IonContent>
     );
 };

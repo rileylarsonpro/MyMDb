@@ -82,10 +82,10 @@ const LogTv = ({ details, location }) => {
                 Review or Log
             </IonButton>
             <IonModal id="select-modal" ref={modal} trigger="open-select-modal">
-                <IonContent>
-                    <IonToolbar>
+                <IonHeader>
+                    <IonToolbar mode="ios">
                         {showLoggingScreen && (
-                            <IonButton onClick={() => setShowLoggingScreen(false)} fill="clear">
+                            <IonButton slot="start" size="small" onClick={() => setShowLoggingScreen(false)} fill="clear" className="">
                                         <IonIcon icon={arrowBackOutline} />
                                         Back
                             </IonButton>
@@ -97,6 +97,8 @@ const LogTv = ({ details, location }) => {
                             </IonButton>
                         </IonButtons>
                     </IonToolbar>
+                </IonHeader>
+                <IonContent>
                     {!showLoggingScreen ? 
                     <>
                         <IonSegment value={loggingMode} onIonChange={loggingModeChanged}>
@@ -111,7 +113,7 @@ const LogTv = ({ details, location }) => {
                             </IonSegmentButton>
                         </IonSegment>
                         {loggingMode === 'episodes' && (
-                            <div className="relative mb-12">
+                            <div className="relative mb-24">
                                 <IonAccordionGroup multiple={true}>
                                     {details?.seasons?.map((season, index) => (
                                         <IonAccordion key={index}>
@@ -140,7 +142,7 @@ const LogTv = ({ details, location }) => {
                                     ))}
                                 </IonAccordionGroup>
                                 { selectedEpisodes.length > 0 && (
-                                    <IonButton onClick={openLogScreen} className="fixed bottom-0 right-0 left-0">Log {selectedEpisodes.length} episode{selectedEpisodes.length !== 1 && 's' }</IonButton>
+                                    <IonButton onClick={openLogScreen} className="fixed bottom-0 right-0 left-0 h-20">Log {selectedEpisodes.length} episode{selectedEpisodes.length !== 1 && 's' }</IonButton>
                                 )}
                             </div>
                         )}

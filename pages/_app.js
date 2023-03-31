@@ -21,6 +21,7 @@ import '@ionic/react/css/display.css';
 
 import '../styles/global.css';
 import '../styles/variables.css';
+import '../styles/quill.overrides.css';
 
 
 
@@ -30,7 +31,7 @@ function MyApp({ Component, pageProps }) {
       <Head>
         <meta
           name="viewport"
-          content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+          content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
         ></meta>
       </Head>
       <Component {...pageProps} />
