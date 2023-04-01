@@ -38,7 +38,7 @@
     "cordova-res": "^0.15.4",
     "eslint": "^7.28.0",
     "eslint-config-next": "^11.0.0",
-    "ionicons": "^6.0.3",
+    "ionicons": "^7.1.0",
     "next-transpile-modules": "^9.0.0",
     "postcss": "^8.4.21",
     "prettier": "^2.2.1",

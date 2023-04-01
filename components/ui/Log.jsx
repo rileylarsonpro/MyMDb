@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     IonButtons,
     IonButton,
@@ -20,14 +20,20 @@ import {
     IonAccordionGroup,
     IonCheckbox,
     IonTextarea,
+    IonPopover,
+    IonDatetime,
+    IonInput,
+    IonChip
 } from '@ionic/react';
-import { closeOutline } from 'ionicons/icons';
+import { closeOutline, heart, heartOutline } from 'ionicons/icons';
 import ReactQuill from 'react-quill';
+import StarInput from '../ui/StarInput.jsx';
 
 import { searchMulti } from '../../store/mediaStore';
 
 const LogForm = ({
     episode,
+    dateWatched: initDateWatched,
     rating: initRating,
     liked: initLiked,
     reviewText: initReviewText,
@@ -37,6 +43,7 @@ const LogForm = ({
     tags: initTags,
     handleChange,
 }) => {
+    const [dateWatched, setDateWatched] = useState(initDateWatched);
     const [rating, setRating] = useState(initRating);
     const [liked, setLiked] = useState(initLiked);
     const [reviewText, setReviewText] = useState(initReviewText);
@@ -53,6 +60,7 @@ const LogForm = ({
     const notesModules = {
         toolbar: { container: `#toolbar-${episode}-notes` },
     };
+    const popover = useRef(null);
     useEffect(() => {
         if (reviewExpanded) {
             setNoteExpanded(false);
@@ -77,16 +85,33 @@ const LogForm = ({
             tags: tags,
         };
         handleChange(log);
-    }, [rating, liked, reviewText, noteText, isPrivate, containsSpoilers, tags]);
+    }, [dateWatched, rating, liked, reviewText, noteText, isPrivate, containsSpoilers, tags]);
     return (
         <>
             <div className="mx-5 my-1">
+                <div className="sm:flex justify-between">
+                    <div>
+                        <IonLabel position="stacked">Date Watched</IonLabel>
+                        <button id={`${episode}-date`}><IonChip color="primary" > {dateWatched.toDateString()} </IonChip></button>
+                        <IonPopover trigger={`${episode}-date`} triggerAction="click">
+                            <IonContent>
+                                <IonDatetime onIonChange={(e) => setDateWatched(new Date(e.detail.value))} presentation="date"/>
+                            </IonContent>
+                        </IonPopover>
+                    </div>
+
+                    <div className="flex-col justify-center items-center">
+                        <div><IonLabel position="stacked">Like</IonLabel></div>
+                        <div><IonIcon color="primary" size="large" role="button" icon={liked ? heart : heartOutline} onClick={() => setLiked(!liked)} /></div>
+                    </div>
+                </div>
+                <StarInput episode={episode} onChange={setRating}/>
                 <IonLabel position="stacked">Review</IonLabel>
                 <ReactQuill
                     id={`review-${episode}`}
                     theme="snow"
-                    value={rating}
-                    onChange={setRating}
+                    value={reviewText}
+                    onChange={setReviewText}
                     formats={formats}
                     modules={reviewModules}
                     onFocus={() => setReviewExpanded(true)}
@@ -134,6 +159,7 @@ const Log = ({ selectedType, selected }) => {
         selected.forEach((episode) => {
             map.set(getEpisodeString(episode), {
                 episode: getEpisodeString(episode),
+                dateWatched: new Date(),
                 rating: 0,
                 liked: false,
                 reviewText: '',
