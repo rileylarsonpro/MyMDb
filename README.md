@@ -89,4 +89,9 @@ Log
 | comments | [ {user: ObjectId, text: String}] |
 
 
+Tasks
+Make a search tag and select for logging when there are tags in the system.
+Add back button to search tab stack.
+
+
 &copy; Riley Larson 2023
