@@ -29,10 +29,11 @@ import { closeOutline, heart, heartOutline, lockClosed, lockOpen, addCircleOutli
 import ReactQuill from 'react-quill';
 import StarInput from '../ui/StarInput.jsx';
 
-import { searchMulti } from '../../store/mediaStore';
+import { logEpisodes } from '../../store/logStore.js';
 
 const LogForm = ({
     episode,
+    episodeString,
     dateWatched: initDateWatched,
     rating: initRating,
     liked: initLiked,
@@ -57,10 +58,10 @@ const LogForm = ({
     const [isRewatch, setIsRewatch] = useState(initIsRewatch);
     const formats = ['bold', 'italic', 'underline', 'list', 'bullet', 'link'];
     const reviewModules = {
-        toolbar: { container: `#toolbar-${episode}-review` },
+        toolbar: { container: `#toolbar-${episodeString}-review` },
     };
     const notesModules = {
-        toolbar: { container: `#toolbar-${episode}-notes` },
+        toolbar: { container: `#toolbar-${episodeString}-notes` },
     };
     const popover = useRef(null);
     useEffect(() => {
@@ -77,8 +78,9 @@ const LogForm = ({
 
     useEffect(() => {
         const log = {
-            dateWatched: dateWatched,
             episode: episode,
+            dateWatched: dateWatched,
+            episodeString: episodeString,
             rating: rating,
             liked: liked,
             reviewText: reviewText,
@@ -111,10 +113,10 @@ const LogForm = ({
                         <IonLabel position="stacked">Date Watched</IonLabel>
                         </div>
                         <div className="flex items-center">
-                            <button id={`${episode}-date`}><IonChip color="primary"><span className="w-56"> {dateWatched ? dateWatched.toDateString(): 'Add date'}</span></IonChip></button>
+                            <button id={`${episodeString}-date`}><IonChip color="primary"><span className="w-56"> {dateWatched ? dateWatched.toDateString(): 'Add date'}</span></IonChip></button>
                             { dateWatched !== null && <button onClick={(e) => {e.stopPropagation(); setDateWatched(null);}} className="flex justify-center"> <IonIcon color="primary" size="large" icon={closeOutline} /></button>}
                         </div>
-                        <IonPopover trigger={`${episode}-date`} triggerAction="click" size="cover">
+                        <IonPopover trigger={`${episodeString}-date`} triggerAction="click" size="cover">
                             <IonContent>
                                 <IonDatetime value={dateWatched && dateWatched.toISOString()} onIonChange={(e) => setDateWatched(new Date(e.detail.value))} presentation="date"/>
                             </IonContent>
@@ -126,10 +128,10 @@ const LogForm = ({
                         <div className="pt-1"><IonIcon color="primary" size="large" role="button" icon={liked ? heart : heartOutline} onClick={() => setLiked(!liked)} /></div>
                     </div>
                 </div>
-                <StarInput episode={episode} onChange={setRating}/>
+                <StarInput episodeString={episodeString} onChange={setRating}/>
                 <IonLabel position="stacked">Review</IonLabel>
                 <ReactQuill
-                    id={`review-${episode}`}
+                    id={`review-${episodeString}`}
                     theme="snow"
                     value={reviewText}
                     onChange={setReviewText}
@@ -138,7 +140,7 @@ const LogForm = ({
                     onFocus={() => setReviewExpanded(true)}
                     className={reviewExpanded && 'h-40'}
                 />
-                <div id={`toolbar-${episode}-review`}>
+                <div id={`toolbar-${episodeString}-review`}>
                     <button className="ql-bold">b</button>
                     <button className="ql-italic">i</button>
                     <button className="ql-underline">u</button>
@@ -149,7 +151,7 @@ const LogForm = ({
                 <div className="pt-2">
                     <IonLabel position="stacked">Notes (Private)</IonLabel>
                     <ReactQuill
-                        id={`notes-${episode}`}
+                        id={`notes-${episodeString}`}
                         theme="snow"
                         value={noteText}
                         onChange={setNoteText}
@@ -158,7 +160,7 @@ const LogForm = ({
                         onFocus={() => setNoteExpanded(true)}
                         className={noteExpanded && 'h-40'}
                     />
-                    <div id={`toolbar-${episode}-notes`}>
+                    <div id={`toolbar-${episodeString}-notes`}>
                         <button className="ql-bold">b</button>
                         <button className="ql-italic">i</button>
                         <button className="ql-underline">u</button>
@@ -172,8 +174,8 @@ const LogForm = ({
                     <IonInput className="outline-input" placeholder="Write your tag and press enter" onKeyPress={ (e) => {e.key === 'Enter' && addTag(e)}}/>
                     <div className="flex flex-wrap pt-1">
                         {tags.map((tag, index) => (
-                            <button onClick={() => removeTag(index)}>
-                                <IonChip key={index} color="primary">
+                            <button onClick={() => removeTag(index)} key={index}>
+                                <IonChip color="primary">
                                     <IonLabel>{tag.name}</IonLabel>
                                     <IonIcon color="primary" size="small" icon={closeOutline} />
                                 </IonChip>
@@ -209,7 +211,8 @@ const Log = ({ selectedType, selected }) => {
         let map = new Map();
         selected.forEach((episode) => {
             map.set(getEpisodeString(episode), {
-                episode: getEpisodeString(episode),
+                episode: episode,
+                episodeString: getEpisodeString(episode),
                 dateWatched: new Date(),
                 rating: 0,
                 liked: false,
@@ -223,9 +226,18 @@ const Log = ({ selectedType, selected }) => {
         });
         return map;
     });
-    console.log("logs", logs)
+    async function submit() {
+        if (selectedType === 'episodes') {
+            let logArray = [];
+            for (const [key, value] of logs.entries()) {
+                logArray.push(value);
+            }
+            console.log("array", logArray);
+            await logEpisodes.run({episodes: logArray})
+        }
+    }
     function handleChange(log) {
-        setLogs(new Map(logs.set(log.episode, log)));
+        setLogs(new Map(logs.set(log.episodeString, log)));
     }
     function accordionChanged(episode) {
         // scroll to top of accordion
@@ -238,20 +250,26 @@ const Log = ({ selectedType, selected }) => {
     return (
         <IonContent>
             {selectedType === 'episodes' && selected.length > 0 && (
-                <IonAccordionGroup multiple={true} className="pb-80">
-                    {selected.map((episode, index) => (
-                        <IonAccordion key={index} id={'accordion-'+ getEpisodeString(episode)}>
-                            <IonItem slot="header" onClick={() => accordionChanged(getEpisodeString(episode))} id={`header-${getEpisodeString(episode)}`}>
-                                <IonLabel >
-                                    {getEpisodeString(episode)} {episode.name}
-                                </IonLabel>
-                            </IonItem>
-                            <IonList slot="content" className="mb-10">
-                                <LogForm {...logs.get(getEpisodeString(episode))} handleChange={handleChange}/>
-                            </IonList>
-                        </IonAccordion>
-                    ))}
-                </IonAccordionGroup>
+                <div className="pb-80">
+                    <IonAccordionGroup multiple={true} >
+                        {selected.map((episode, index) => {
+                            let episodeString = getEpisodeString(episode);
+                            return (
+                            <IonAccordion key={index} id={'accordion-'+ episodeString}>
+                                <IonItem slot="header" onClick={() => accordionChanged(episodeString)} id={`header-${episodeString}`}>
+                                    <IonLabel>
+                                        {episodeString} {episode.name}
+                                    </IonLabel>
+                                </IonItem>
+                                <IonList slot="content" className="mb-4">
+                                    <LogForm {...logs.get(episodeString)} handleChange={handleChange}/>
+                                </IonList>
+                            </IonAccordion>
+                        )
+                            })}
+                    </IonAccordionGroup>
+                    <IonButton expand="block" className="mt-4" onClick={() => submit()}>Save {selected.length} episode{selected.length && 's'}</IonButton>
+                </div>
             )}
         </IonContent>
     );
