@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import Script from 'next/script';
+import { useEffect } from 'react';
 import { setupIonicReact } from '@ionic/react';
 
 import 'tailwindcss/tailwind.css';

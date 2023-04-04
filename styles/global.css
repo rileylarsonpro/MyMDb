@@ -220,6 +220,7 @@ h1 {
   border: .5px solid var(--ion-color-primary);
   border-radius: 5px;
 }
-.outline-input input {
-  padding-left: .5rem !important;
+
+.ion-content::part(scroll){
+  overscroll-behavior: none;
 }

@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import { IonBadge, IonItem, IonIcon, IonButton, IonLabel, createGesture, Gesture } from '@ionic/react';
 import {closeOutline} from 'ionicons/icons';
-const StartInput = ({episode, onChange}) => {
+const StartInput = ({id, onChange}) => {
     const [rating, setRating] = useState(0);
     const [hover, setHover] = useState(0);
     useEffect(() => {
-        let thing = document.getElementById(`star-${episode}`);
+        let thing = document.getElementById(`star-${id}`);
         let gesture = createGesture({
             el: thing,
-            gestureName: `star-${episode}`,
+            gestureName: `star-${id}`,
             onStart: (e) => document.elementFromPoint(e.currentX, e.currentY).dispatchEvent(new MouseEvent('mouseover', {bubbles: true})),
             onMove: (e) => {
                 let el = document.elementFromPoint(e.currentX, e.currentY);
@@ -28,7 +28,7 @@ const StartInput = ({episode, onChange}) => {
         onChange(rating);
     }, [rating])
     return (
-        <div id={`star-${episode}`}>
+        <div id={`star-${id}`}>
             <IonLabel position="stacked"><span>{rating === 0 ? 'Not rated' : rating + ' / 10'}</span></IonLabel>
             <div className="flex items-center">
             {[...Array(10)].map((star, index) => {
@@ -38,7 +38,7 @@ const StartInput = ({episode, onChange}) => {
                     <button
                         type="button"
                         key={index}
-                        id={`${episode}-${index}`}
+                        id={`${id}-${index}`}
                         className={`star-button ${icon}`}
                         onClick={() => {setRating(index)}}
                         onMouseEnter={() => setHover(index)}

@@ -81,7 +81,7 @@ const LogTv = ({ details, location }) => {
             <IonButton id="open-select-modal" expand="block">
                 Review or Log
             </IonButton>
-            <IonModal id="select-modal" ref={modal} trigger="open-select-modal">
+            <IonModal id="select-modal" ref={modal} trigger="open-select-modal" fullscreen={true}>
                 <IonHeader>
                     <IonToolbar mode="ios">
                         {showLoggingScreen && (
@@ -130,6 +130,7 @@ const LogTv = ({ details, location }) => {
                                                             slot="start"
                                                             checked={checkIfSelected(episode)}
                                                             onIonChange={(e) => checkboxToggled(e, episode)}
+                                                            aria-label={episode.name}
                                                         ></IonCheckbox>
                                                         <IonLabel>
                                                             <h3>{episode.name}</h3>
