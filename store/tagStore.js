@@ -7,13 +7,13 @@ import {
 } from 'pullstate';
 
 
-import logApi from '../api/log.api.js';
+import tagApi from '../api/tag.api.js';
 
 
 
-export const logEpisode = createAsyncAction(async (body) => {
+export const getUserTags = createAsyncAction(async () => {
     try {
-        let { data } = await logApi.logEpisode(body);
+        let { data } = await tagApi.getUserTags();
         return successResult(data);
     } catch (e) {
         console.log(e);

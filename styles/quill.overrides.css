@@ -849,6 +849,7 @@
   font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
   padding: 8px;
 }
+
 .ql-toolbar.ql-snow .ql-formats {
   margin-right: 15px;
 }
@@ -944,4 +945,14 @@
   border-right: .5px solid var(--ion-color-primary);
   border-bottom: 0px;
   border-radius: 5px 5px 0px 0px;
+}
+.ql-container.ql-snow.display-only {
+  border: .5px solid var(--ion-color-primary);
+  border-radius: 5px;
+  box-sizing: border-box;
+  font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+}
+
+.ql-container.ql-snow > .ql-editor {
+  max-height: unset;
 }

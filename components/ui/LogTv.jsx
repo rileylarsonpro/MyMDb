@@ -150,7 +150,7 @@ const LogTv = ({ details, location }) => {
                     </>
                     : 
                     <>  
-                        <Log key={rerenderKey} selectedType={loggingMode} selected={selectedEpisodes}/>
+                        <Log key={rerenderKey} selectedType={loggingMode} selected={selectedEpisodes} dismissModal={dismiss}/>
                     </>
                      }
                 </IonContent>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
     IonButtons,
     IonButton,
@@ -24,7 +24,7 @@ import {
     IonDatetime,
     IonInput,
     IonChip,
-    IonSearchbar
+    IonSearchbar,
 } from '@ionic/react';
 import {
     closeOutline,
@@ -36,12 +36,14 @@ import {
     alertCircleOutline,
     eye,
     eyeOff,
-    addOutline
+    addOutline,
 } from 'ionicons/icons';
 import ReactQuill from 'react-quill';
 import StarInput from '../ui/StarInput.jsx';
 
 import { logEpisode } from '../../store/logStore.js';
+import { getUserTags } from '../../store/tagStore.js';
+import { useToast } from '../useToast.tsx';
 
 const LogForm = ({
     id,
@@ -55,22 +57,21 @@ const LogForm = ({
     containsSpoilers: initContainsSpoilers,
     isRewatch: initIsRewatch,
     handleChange,
+    tagOptions,
 }) => {
-
     const [dateWatched, setDateWatched] = useState(initDateWatched);
     const [rating, setRating] = useState(initRating);
     const [liked, setLiked] = useState(initLiked);
     const [reviewText, setReviewText] = useState(initReviewText);
-    const [reviewExpanded, setReviewExpanded] = useState(false);
     const [noteText, setNoteText] = useState(initNoteText);
-    const [noteExpanded, setNoteExpanded] = useState(false);
     const [tags, setTags] = useState(initTags);
-    const [tagOptions, setTagOptions] = useState([{name: 'netflix', count: 1}, {name: 'action', count: 1}]);
     const [tagSearch, setTagSearch] = useState('');
     const [isPrivate, setIsPrivate] = useState(initIsPrivate);
-    const [tagModalOpen, setTagModalOpen] = useState(false);
+    const [modalOpen, setModalOpen] = useState(false);
     const [containsSpoilers, setContainsSpoilers] = useState(initContainsSpoilers);
     const [isRewatch, setIsRewatch] = useState(initIsRewatch);
+    const [modalTitle, setModalTitle] = useState('Log Episode');
+    const [modalSlot, setModalSlot] = useState('reviewText');
     const formats = ['bold', 'italic', 'underline', 'list', 'bullet', 'link'];
     const reviewModules = {
         toolbar: { container: `#toolbar-${id}-review` },
@@ -79,19 +80,7 @@ const LogForm = ({
         toolbar: { container: `#toolbar-${id}-notes` },
     };
     const popover = useRef(null);
-    
-    useEffect(() => {
-        if (reviewExpanded) {
-            setNoteExpanded(false);
-        }
-    }, [reviewExpanded]);
-
-    useEffect(() => {
-        if (noteExpanded) {
-            setReviewExpanded(false);
-        }
-    }, [noteExpanded]);
-
+    const modal = useRef(null);
     useEffect(() => {
         const log = {
             dateWatched: dateWatched,
@@ -118,14 +107,38 @@ const LogForm = ({
     ]);
     function addTagsButtonClicked(e) {
         e.preventDefault();
-        e.stopPropagation();
+        setModalTitle('Add Tags');
+        setModalSlot('tags');
+        setModalOpen(true);
+
         // wait for modal to open
         setTimeout(() => {
             let searchElement = document.getElementById(`tag-search-${id}`);
             searchElement.querySelector('input').focus();
         }, 500);
     }
-
+    function addReviewText(e){
+        e.preventDefault();
+        setModalTitle('Add Review');
+        setModalSlot('reviewText');
+        setModalOpen(true);
+         // wait for modal to open
+        setTimeout(() => {
+            let input = document.getElementById(`review-${id}`);
+            input.querySelector('.ql-editor').focus();
+        }, 500);
+    }
+    function addNoteText(e){
+        e.preventDefault();
+        setModalTitle('Add Notes');
+        setModalSlot('noteText');
+        setModalOpen(true);
+            // wait for modal to open
+        setTimeout(() => {
+            let input = document.getElementById(`note-${id}`);
+            input.querySelector('.ql-editor').focus();
+        }, 500);
+    }
 
     function addTag(tagName) {
         let searchElement = document.getElementById(`tag-search-${id}`);
@@ -142,7 +155,9 @@ const LogForm = ({
         newTags.splice(index, 1);
         setTags(newTags);
     }
-    const filteredTagOptions = tagOptions.filter((tag) => (tag.name.toLowerCase().includes(tagSearch.toLowerCase())));
+    const filteredTagOptions = useMemo(() => {
+        return tagOptions.filter((tag) => tag.name.toLowerCase().includes(tagSearch.toLowerCase()));
+    }, [tagSearch, tagOptions]);
 
     return (
         <>
@@ -198,81 +213,51 @@ const LogForm = ({
                         </div>
                     </div>
                 </div>
-                <StarInput id={id} onChange={setRating} />         
+                <StarInput id={id} onChange={setRating} />
                 <IonLabel position="stacked">Review</IonLabel>
-                <ReactQuill
-                    id={`review-${id}`}
-                    theme="snow"
-                    value={reviewText}
-                    onChange={setReviewText}
-                    formats={formats}
-                    modules={reviewModules}
-                    onFocus={() => {
-                        setReviewExpanded(true)
-                    }}
-                    className={reviewExpanded && 'h-40'}
-                />
-                <div id={`toolbar-${id}-review`}>
-                    <button className="ql-bold">b</button>
-                    <button className="ql-italic">i</button>
-                    <button className="ql-underline">u</button>
-                    <button className="ql-list" value="ordered"></button>
-                    <button className="ql-list" value="bullet"></button>
-                    <button className="ql-link">link</button>
+                <div onClick={addReviewText} role="button" class="quill h-32 cursor-pointer">
+                    <div class="ql-container ql-snow display-only">
+                        <div class="ql-editor ql-blank" data-gramm="false" contenteditable="false">
+                            <p dangerouslySetInnerHTML={{__html: reviewText}}></p>
+                        </div>
+                    </div>
                 </div>
+
                 <div className="pt-2">
                     <IonLabel position="stacked">Notes (Private)</IonLabel>
-                    <ReactQuill
-                        id={`notes-${id}`}
-                        theme="snow"
-                        value={noteText}
-                        onChange={setNoteText}
-                        formats={formats}
-                        modules={notesModules}
-                        onFocus={() => {
-                            setNoteExpanded(true)
-                        }}
-                        className={noteExpanded && 'h-40'}
-                    />
-                    <div id={`toolbar-${id}-notes`}>
-                        <button className="ql-bold">b</button>
-                        <button className="ql-italic">i</button>
-                        <button className="ql-underline">u</button>
-                        <button className="ql-list" value="ordered"></button>
-                        <button className="ql-list" value="bullet"></button>
-                        <button className="ql-link">link</button>
+                    <div onClick={addNoteText} role="button" class="quill h-32 cursor-pointer">
+                        <div class="ql-container ql-snow display-only">
+                            <div class="ql-editor ql-blank" data-gramm="false" contenteditable="false">
+                                <p dangerouslySetInnerHTML={{__html: noteText}}></p>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div className="mt-2 pt-2">
-                    <button id={`tag-modal-${id}`} className="flex items-center" onClick={addTagsButtonClicked}>
-                        <IonLabel color="primary" className="whitespace-nowrap">Add Tags</IonLabel>
-                        <IonIcon color="primary" size="small" icon={addOutline} />
-                    </button>
-                    { tags.length > 0 &&
-                    <div className="flex overflow-x-auto py-1 h-14">
-                        {tags.map((tag, index) => (
-                            <button onClick={() => removeTag(index)} key={index}>
-                                <IonChip color="primary">
-                                    <IonLabel className="whitespace-nowrap">{tag}</IonLabel>
-                                    <IonIcon color="primary" size="small" icon={closeOutline} />
-                                </IonChip>
-                            </button>
-                        ))}
-                    </div>}
-                    
-                   
-                    <IonModal
-                        ref={modal}
-                        trigger={`tag-modal-${id}`}
-                        isOpen={tagModalOpen}
-                    >
+                    <IonButton onClick={addTagsButtonClicked}size="small" fill="outline"> Add Tags</IonButton>
+                    {tags.length > 0 && (
+                        <div className="flex overflow-x-auto py-1 h-14">
+                            {tags.map((tag, index) => (
+                                <button onClick={() => removeTag(index)} key={index}>
+                                    <IonChip color="primary">
+                                        <IonLabel className="whitespace-nowrap">{tag}</IonLabel>
+                                        <IonIcon color="primary" size="small" icon={closeOutline} />
+                                    </IonChip>
+                                </button>
+                            ))}
+                        </div>
+                    )}
+
+                    <IonModal ref={modal} isOpen={modalOpen}>
                         <IonContent fullscreen={true}>
                             <IonHeader>
                                 <IonToolbar mode="ios">
-                                    <IonTitle>Adding Tags</IonTitle>
+                                    <IonTitle>{modalTitle}</IonTitle>
                                     <IonButtons slot="end">
                                         <IonButton
-                                            onClick={() => {
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                setModalOpen(false);
                                                 modal.current?.dismiss();
                                             }}
                                         >
@@ -281,38 +266,95 @@ const LogForm = ({
                                     </IonButtons>
                                 </IonToolbar>
                             </IonHeader>
-                            <div className="flex overflow-x-auto pt-1 h-12">
-                                {tags.map((tag, index) => (
-                                    <button onClick={() => removeTag(index)} key={index}>
-                                        <IonChip color="primary">
-                                            <IonLabel className="whitespace-nowrap">{tag}</IonLabel>
-                                            <IonIcon color="primary" size="small" icon={closeOutline} />
-                                        </IonChip>
-                                    </button>
-                                ))}
-                            </div>
-                            <IonSearchbar
-                                id={`tag-search-${id}`}
-                                className="outline-input"
-                                placeholder="Find or create a tag"
-                                onKeyPress={(e) => {
-                                    e.key === 'Enter' && addTag(e.target.value.toLowerCase().trim());
-                                }}
-                                onIonChange={(e) => setTagSearch(e.target.value.toLowerCase().trim())}
-                            ></IonSearchbar>
-                            <IonList>
-                                {filteredTagOptions.map((tag, index) => (
-                                    <IonItem
-                                        key={index}
-                                        onClick={() => {
-                                            addTag(tag.name);
-                                            modal.current?.setCurrentBreakpoint(0.5);
+                            <div className="p-3">
+                            {modalSlot === 'tags' && (
+                                <>
+                                    <div className="flex overflow-x-auto pt-1 h-12">
+                                        {tags.map((tag, index) => (
+                                            <button onClick={() => removeTag(index)} key={index}>
+                                                <IonChip color="primary">
+                                                    <IonLabel className="whitespace-nowrap">
+                                                        {tag}
+                                                    </IonLabel>
+                                                    <IonIcon
+                                                        color="primary"
+                                                        size="small"
+                                                        icon={closeOutline}
+                                                    />
+                                                </IonChip>
+                                            </button>
+                                        ))}
+                                    </div>
+                                    <IonSearchbar
+                                        id={`tag-search-${id}`}
+                                        className="outline-input"
+                                        placeholder="Find or create a tag"
+                                        onKeyPress={(e) => {
+                                            e.key === 'Enter' &&
+                                                addTag(e.target.value.toLowerCase().trim());
                                         }}
-                                    >
-                                        <IonLabel>{tag.name}</IonLabel>
-                                    </IonItem>
-                                ))}
-                            </IonList>
+                                        onIonChange={(e) =>
+                                            setTagSearch(e.target.value.toLowerCase().trim())
+                                        }
+                                    ></IonSearchbar>
+                                    <IonList>
+                                        {filteredTagOptions.map((tag, index) => (
+                                            <IonItem
+                                                key={index}
+                                                onClick={() => {
+                                                    addTag(tag.name);
+                                                    modal.current?.setCurrentBreakpoint(0.5);
+                                                }}
+                                            >
+                                                <IonLabel>{tag.name}</IonLabel>
+                                            </IonItem>
+                                        ))}
+                                    </IonList>
+                                </>
+                            )}
+                            {modalSlot === 'reviewText' && (
+                                <>
+                                    <ReactQuill
+                                        id={`review-${id}`}
+                                        theme="snow"
+                                        value={reviewText}
+                                        onChange={setReviewText}
+                                        formats={formats}
+                                        modules={reviewModules}
+                                        className="h-72"
+                                    />
+                                    <div id={`toolbar-${id}-review`}>
+                                        <button className="ql-bold">b</button>
+                                        <button className="ql-italic">i</button>
+                                        <button className="ql-underline">u</button>
+                                        <button className="ql-list" value="ordered"></button>
+                                        <button className="ql-list" value="bullet"></button>
+                                        <button className="ql-link">link</button>
+                                    </div>
+                                </>
+                            )}
+                            {modalSlot === 'noteText' && (
+                                <>
+                                    <ReactQuill
+                                        id={`note-${id}`}
+                                        theme="snow"
+                                        value={noteText}
+                                        onChange={setNoteText}
+                                        formats={formats}
+                                        modules={notesModules}
+                                        className="h-72"
+                                    />
+                                    <div id={`toolbar-${id}-notes`}>
+                                        <button className="ql-bold">b</button>
+                                        <button className="ql-italic">i</button>
+                                        <button className="ql-underline">u</button>
+                                        <button className="ql-list" value="ordered"></button>
+                                        <button className="ql-list" value="bullet"></button>
+                                        <button className="ql-link">link</button>
+                                    </div>
+                                </>
+                            )}
+                            </div>
                         </IonContent>
                     </IonModal>
                 </div>
@@ -349,7 +391,11 @@ const LogForm = ({
                     </button>
                     <button
                         className="flex-col justify-center items-center text-center"
-                        onClick={(e) => {e.preventDefault(); e.stopPropagation(); setIsRewatch(!isRewatch)}}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setIsRewatch(!isRewatch);
+                        }}
                     >
                         <IonLabel position="stacked">
                             {isRewatch ? 'Rewatch' : '1st Watch'}
@@ -373,7 +419,9 @@ function getEpisodeString(episode) {
     return `S${episode.season_number}E${episode.episode_number}`;
 }
 
-const Log = ({ selectedType, selected }) => {
+const Log = ({ selectedType, selected, dismissModal }) => {
+    const toast = useToast();
+    const [tagOptions, setTagOptions] = useState([]);
     const [logs, setLogs] = useState(() => {
         let map = new Map();
         selected.forEach((episode) => {
@@ -395,6 +443,15 @@ const Log = ({ selectedType, selected }) => {
         });
         return map;
     });
+    useEffect(() => {
+        async function tagOptionsInit() {
+            let response = await getUserTags.run();
+            if(response.payload && response.payload.length > 0) {
+                setTagOptions(response.payload);
+            }
+        }
+        tagOptionsInit();
+    }, []);
     async function submit() {
         if (selectedType === 'episodes') {
             let logArray = [];
@@ -402,7 +459,9 @@ const Log = ({ selectedType, selected }) => {
                 value.episode = logArray.push(logEpisode.run(value));
             }
             await Promise.all(logArray);
+            toast.success(`${logArray.length} episode${logArray.length !== 1  && 's'} logged successfully`);
         }
+        dismissModal();
     }
     function handleChange(log) {
         let prevLog = logs.get(log.id);
@@ -438,6 +497,7 @@ const Log = ({ selectedType, selected }) => {
                                     <IonList slot="content" className="mb-4">
                                         <LogForm
                                             {...logs.get(episodeString)}
+                                            tagOptions={tagOptions}
                                             handleChange={handleChange}
                                         />
                                     </IonList>
