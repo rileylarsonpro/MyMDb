@@ -7,12 +7,9 @@ import {
     IonContent,
     IonToolbar,
     IonTitle,
-    IonPage,
     IonList,
     IonItem,
     IonLabel,
-    IonAvatar,
-    IonImg,
     IonIcon,
     IonSegment,
     IonSegmentButton,
@@ -22,25 +19,36 @@ import {
 } from '@ionic/react';
 import { closeOutline, arrowBackOutline } from 'ionicons/icons';
 import Log from './Log';
-import { searchMulti, getDetails } from '../../store/mediaStore';
+import { getDetails } from '../../store/mediaStore';
 
 const LogTv = ({ details, location }) => {
     const [started, finished, result, updating] = getDetails.useWatch();
     const [loggingMode, setLoggingMode] = useState('episodes');
     const [showLoggingScreen, setShowLoggingScreen] = useState(false);
     const [selectedEpisodes, setSelectedEpisodes] = useState([]);
+    const [selectedSeason, setSelectedSeason] = useState(null);
     const [rerenderKey, setRerenderKey] = useState(0);
     const modal = useRef(null);
     const logModal = useRef(null);
     useEffect(() => {
-        console.log("clearing selected episodes")
         setSelectedEpisodes([]);
     }, [updating]);
 
     useEffect(() => {
-        console.log("clearing selected episodes")
-        setSelectedEpisodes([]);
-    }, [updating, ]);
+        if (loggingMode === 'episodes') {
+            setSelectedSeason(null);
+        }
+        if (loggingMode === 'season') {
+            setSelectedEpisodes([]);
+        }
+        if (loggingMode === 'show') {
+            setSelectedEpisodes([]);
+            setSelectedSeason(null);
+            setShowLoggingScreen(true);
+        }
+    }, [loggingMode]);
+
+
 
     //cleanup
     useEffect( () => () => {
@@ -49,11 +57,12 @@ const LogTv = ({ details, location }) => {
         setShowLoggingScreen(false);
     }, [location.pathname])
 
-    function dismiss() {
+    function dismiss(finished = false) {
         modal.current?.dismiss();
-    }
-    function logModalDismiss() {
-        logModal.current?.dismiss();
+        if (finished) {
+            setSelectedEpisodes([]);
+            setShowLoggingScreen(false);
+        }
     }
     function loggingModeChanged(e) {
         setLoggingMode(e.detail.value);
@@ -73,9 +82,33 @@ const LogTv = ({ details, location }) => {
     function checkIfSelected(episode) {
         return selectedEpisodes.some((ep) => ep.id === episode.id);
     }
+    function selectSeason(season) {
+        season.show_id = details.id;
+        setSelectedSeason(season);
+        openLogScreen();
+    }
     function openLogScreen() {
         setShowLoggingScreen(true);
     }
+    function getSelected() {
+        if (loggingMode === 'episodes') {
+            return selectedEpisodes;
+        } else if (loggingMode === 'season') {
+            return selectedSeason;
+        }
+        else if (loggingMode === 'show') {
+            return details;
+        }
+    }
+    function backButtonClicked () {
+        if (showLoggingScreen) {
+            setShowLoggingScreen(false);
+        }
+        if (loggingMode === 'show') {
+            setLoggingMode('episodes');
+        }
+    }
+
     return (
         <>
             <IonButton id="open-select-modal" expand="block">
@@ -85,7 +118,7 @@ const LogTv = ({ details, location }) => {
                 <IonHeader>
                     <IonToolbar mode="ios">
                         {showLoggingScreen && (
-                            <IonButton slot="start" size="small" onClick={() => setShowLoggingScreen(false)} fill="clear" className="">
+                            <IonButton slot="start" size="small" onClick={backButtonClicked} fill="clear" className="">
                                         <IonIcon icon={arrowBackOutline} />
                                         Back
                             </IonButton>
@@ -147,10 +180,25 @@ const LogTv = ({ details, location }) => {
                                 )}
                             </div>
                         )}
+                        {loggingMode === 'season' && (
+                            <div className="relative mb-24">
+                                <IonList>
+                                    {details?.seasons?.map((season, index) => (
+                                        <IonItem key={index}  button onClick={() => selectSeason(season)}>
+                                            <IonLabel>
+                                                <h3>{season.name}</h3>
+                                                <p>{season.overview}</p>
+                                            </IonLabel>
+                                        </IonItem>
+                                    ))}
+                                </IonList>
+                            </div>
+                        )}
+
                     </>
                     : 
                     <>  
-                        <Log key={rerenderKey} selectedType={loggingMode} selected={selectedEpisodes} dismissModal={dismiss}/>
+                        <Log key={rerenderKey} selectedType={loggingMode} selected={getSelected()} dismissModal={dismiss}/>
                     </>
                      }
                 </IonContent>

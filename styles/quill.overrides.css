@@ -527,8 +527,13 @@
 .ql-snow .ql-out-top {
   visibility: hidden;
 }
+
+@media (max-width: 768px) {
+  .ql-snow .ql-tooltip {
+    position: absolute;
+  }
+}
 .ql-snow .ql-tooltip {
-  position: absolute;
   transform: translateY(10px);
 }
 .ql-snow .ql-tooltip a {

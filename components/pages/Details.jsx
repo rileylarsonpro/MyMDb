@@ -1,12 +1,6 @@
 import {
     IonPage,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
     IonContent,
-    IonItem,
-    IonLabel,
-    IonList,
     IonGrid,
     IonRow,
     IonCol,
@@ -15,8 +9,8 @@ import {
 } from '@ionic/react';
 import { useEffect, useState } from 'react';
 import { getDetails } from '../../store/mediaStore';
-import { CreateAnimation, Animation } from '@ionic/react';
 import LogTv from '../ui/LogTv';
+import LogMovie from '../ui/LogMovie';
 import Loading from '../ui/Loading';
 
 const Details = (props) => {
@@ -27,7 +21,7 @@ const Details = (props) => {
 
     useEffect(() => {
         getDetails.run({ mediaType, id }).then((res) => {
-            console.log(res.payload);
+            console.log("Page details", res.payload);
             setDetails(res.payload);
             setWindowWidth(window.innerWidth);
             setFinished(true);
@@ -102,6 +96,7 @@ const Details = (props) => {
                         )}
                     </IonRow>
                     { mediaType === 'tv' && <LogTv details={details} {...props} /> }
+                    { mediaType === 'movie' && <LogMovie details={details} {...props} /> }
                           
                 </IonGrid>
             </IonContent>
