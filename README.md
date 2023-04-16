@@ -90,8 +90,9 @@ Log
 
 
 Tasks
-Make a search tag and select for logging when there are tags in the system.
 Add back button to search tab stack.
+Add auto detect rewatch 
+Fix duplicate tag bug
 
 
 &copy; Riley Larson 2023

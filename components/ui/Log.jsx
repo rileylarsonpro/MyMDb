@@ -173,7 +173,7 @@ const Log = ({ selectedType, selected, dismissModal }) => {
                     </IonButton>
                 </div>
             )}
-            {selectedType === 'show' || selectedType === 'movie' && (
+            { (selectedType === 'show' || selectedType === 'movie') && (
                 <div className="pb-80">
                     <LogForm
                         {...log}
