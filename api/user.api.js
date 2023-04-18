@@ -6,4 +6,12 @@ module.exports = {
     post('/api/v1/user/create-account', data),
   checkForAccount: (data) =>
     get(`/api/v1/user/check-for-account?email=${data.email}&username=${data.username}`),
+  uploadProfilePicture: (data) =>
+    post('/api/v1/user/file/profile-picture', data),
+  getUserProfile: () =>
+    get('/api/v1/user/profile'),
+  getProfilePicture: (name) =>
+    get(`/api/v1/user/file${name}`),
+
+
 }

@@ -21,6 +21,15 @@ export const authStore = new Store({
     loggedIn: false,
 });
 
+export const getUserProfile = createAsyncAction(async () => {
+    try {
+        let { data: profile } = await userApi.getUserProfile();
+        return successResult(profile);
+    } catch (e) {
+        return errorResult([], 'Could not get user profile');
+    }
+});
+
 export const getFirebaseUser = createAsyncAction(
     async () => {
         let user = await fb_getCurrentUser();
@@ -89,6 +98,8 @@ export const signOutOfFirebase = createAsyncAction(async () => {
     await getFirebaseUser.run();
     return successResult();
 });
+
+
 
 registerInDevtools({
     authStore,
