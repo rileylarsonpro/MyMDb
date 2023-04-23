@@ -12,6 +12,6 @@ module.exports = {
     get('/api/v1/user/profile'),
   getProfilePicture: (name) =>
     get(`/api/v1/user/file${name}`),
-
-
+  deleteFile: (file) =>
+    destroy(`/api/v1/user/file${file}`),
 }

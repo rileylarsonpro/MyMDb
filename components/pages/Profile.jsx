@@ -9,82 +9,68 @@ import {
   IonToggle,
   IonLabel,
   IonIcon,
+  IonButtons,
   IonButton,
-  IonImg
+  IonImg,
+  IonAvatar,
+  useIonModal
 } from '@ionic/react';
 import { useState, useEffect } from 'react';
-import { image, closeOutline } from 'ionicons/icons';
-import userApi from '../../api/user.api.js';
+import { cogOutline } from 'ionicons/icons';
 import { getUserProfile } from '../../store/authStore.js';
 import Loading from '../ui/Loading';
+import Settings from './Settings';
 
 
 
 
 const Profile = ({ history }) => {
   const [started, finished, result, updating] = getUserProfile.useWatch();
-  const [currentFile, setCurrentFile] = useState(null);
   const [profile, setProfile] = useState(null);
-  function openFileUpload(e) {
-    document.getElementById('file-input').click();
-  }
+  const [present, dismiss] = useIonModal(Settings, {
+    onDismiss: (data, role) => dismiss(data, role),
+    profile,
+    history,
+  });
   useEffect(() => {
     async function profileInit() {
       let response = await getUserProfile.run();
-        if (response.payload) {
-          setProfile(response.payload);
-        }
+      if (response.payload) {
+        setProfile(response.payload);
+      }
     }
     profileInit();
   }, []);
-  function onFileInput(e) {
-    if (!e.target.files[0]) return;
-    const file = e.target.files[0];
-    setCurrentFile(file);
-    let reader = new FileReader();
-
-    let imgTag = document.getElementById("myimage");
-    imgTag.title = file.name;
-
-    reader.onload = function (event) {
-      imgTag.src = event.target.result;
-    };
-
-    reader.readAsDataURL(file);
-  }
-  function clearCurrentFile() {
-    setCurrentFile(null);
-    document.getElementById("myimage").src = '';
-  }
-  async function save() {
-    let formData = new FormData();
-    formData.append('file', currentFile);
-    userApi.uploadProfilePicture(formData);
+  function openSettings() {
+    present({
+      onWillDismiss: (ev) => {
+        if (ev.detail.role === 'save') {
+          //update profile
+          console.log('save', ev.detail.data);
+        }
+      },
+    });
   }
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar>
+        <IonToolbar mode="ios">
+          <IonButtons slot="start">
+            <IonButton onClick={() => openSettings()}>
+              <IonIcon icon={cogOutline} />
+            </IonButton>
+          </IonButtons>
           <IonTitle>Profile</IonTitle>
         </IonToolbar>
       </IonHeader>
       { !finished ? <Loading /> : (
-      <IonContent>
-        <IonItem>
-          <IonButton fill="outline" onClick={openFileUpload}>
-            <IonIcon lazy="true" slot="start" icon={image}></IonIcon>
-            <IonLabel slot="end">Profile pic</IonLabel>
-          </IonButton>
-          <input class="ion-hide" type="file" onChange={onFileInput} id="file-input"
-            accept="image/png, image/jpeg" />
-        </IonItem>
-        <IonItem>
-          {currentFile && <button onClick={clearCurrentFile}> <IonIcon color="primary" size="large" icon={closeOutline} /> </button>}
-          <IonImg id="myimage"></IonImg>
-        </IonItem>
-        <IonButton fill="outline" onClick={save}>Save</IonButton>
-        <IonImg src={`${process.env.NEXT_PUBLIC_API_ORIGIN_NATIVE}/api/v1/user/file${profile.profilePicture}`} />
-      </IonContent>
+        <IonContent>
+          <div className="flex justify-center text-center">
+            {profile?.profilePicture && <IonAvatar>
+              <IonImg className="w-32 h-32" src={`${process.env.NEXT_PUBLIC_API_ORIGIN_NATIVE}/api/v1/user/file${profile.profilePicture}`} alt=""/>
+            </IonAvatar>}
+          </div>
+        </IonContent>
       )}
     </IonPage>
   );

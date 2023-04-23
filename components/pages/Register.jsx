@@ -158,7 +158,7 @@ const Register = ({history}) => {
                         <>
                             <IonLabel
                                 position={errors['acceptTerms'] ? 'stacked' : ''}
-                                class="ion-text-wrap"
+                                className="ion-text-wrap"
                             >
                                 <div className="flex items-center">
                                     I agree to the terms and conditions and the privacy policy
