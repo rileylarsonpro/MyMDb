@@ -41,6 +41,11 @@ const Profile = ({ history }) => {
     }
     profileInit();
   }, []);
+  useEffect(() => {
+    if (finished && result.payload) {
+      setProfile(result.payload);
+    }
+  },[finished])
   function openSettings() {
     present({
       onWillDismiss: (ev) => {
@@ -65,11 +70,13 @@ const Profile = ({ history }) => {
       </IonHeader>
       { !finished ? <Loading /> : (
         <IonContent>
-          <div className="flex justify-center text-center">
-            {profile?.profilePicture && <IonAvatar>
-              <IonImg className="w-32 h-32" src={`${process.env.NEXT_PUBLIC_API_ORIGIN_NATIVE}/api/v1/user/file${profile.profilePicture}`} alt=""/>
+          <div className="flex justify-center items-center text-center mt-4">
+            {profile?.profilePicture && <IonAvatar className="w-32 h-32">
+              <IonImg  src={`${process.env.NEXT_PUBLIC_API_ORIGIN_NATIVE}/api/v1/user/file${profile.profilePicture}`} alt=""/>
             </IonAvatar>}
           </div>
+          <IonLabel className="flex justify-center text-center mt-4">{profile?.displayName}</IonLabel>
+          
         </IonContent>
       )}
     </IonPage>
