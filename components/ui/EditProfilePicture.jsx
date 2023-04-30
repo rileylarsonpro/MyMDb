@@ -33,7 +33,8 @@ const EditProfilePicture = ({ profile }) => {
   function clearCurrentFile() {
     setCurrentFile(null);
     setCurrentFileURL('');
-    document.getElementById('file-input').value = '';
+    let input = document.getElementById('file-input');
+    if(input) input.value = '';
   }
   async function save() {
     let formData = new FormData();
