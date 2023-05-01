@@ -23,6 +23,8 @@ import Settings from './Settings';
 import ProfilePicture from '../ui/ProfilePicture';
 import userApi from '../../api/user.api.js';
 import { useToast } from '../useToast.tsx';
+import {formatTimestamp} from '../../utils/functions.js';
+import Backdrop from '../ui/Backdrop.jsx';
 
 const Profile = ({ history }) => {
     const toast = useToast();
@@ -78,17 +80,34 @@ const Profile = ({ history }) => {
                 <Loading />
             ) : (
                 <IonContent>
-                    <div className="flex justify-center items-center text-center mt-4">
-                        {profile && (
+                    {profile?.backgroundImage && (
+                        <Backdrop src = {profile.backgroundImage} />
+                    )}
+                    <div className='grid grid-flow-col auto-cols-auto gap-4 px-[25%] py-4 max-lg:px-4 thin-bottom-border'>
+                        <div>
+                            <h1 className="text-lg line-clamp-1"><strong>{profile?.displayName}</strong></h1>
+                            <div className="text-xs mb-2 line-clamp-1">{profile?.username}</div>
+                            <div className="ql-snow display-only h-12 overflow-auto text-xs">
+                                <div className="ql-blank" data-gramm="false">
+                                    <p dangerouslySetInnerHTML={{ __html: profile?.bio }}></p>
+                                </div>
+                            </div>
+                            <div className='pt-2'> 
+                                <IonButton fill="outline" size="small">Follow</IonButton>
+                            </div>
+                        </div>
+                        <div className='flex-col justify-end'>
+                            <div className='flex justify-center'>
                             <ProfilePicture
-                                profilePicture={profile.profilePicture}
-                                sizeClasses="h-32 w-32"
+                                profilePicture={profile?.profilePicture}
+                                sizeClasses="h-32 w-32 max-lg:h-24 max-lg:w-24"
                             />
-                        )}
+                            </div>
+                            
+                            <div className='text-xs text-center mt-3'>Member Since</div>
+                            <div className='text-xs text-center'>{formatTimestamp(profile?.createdAt)}</div>
+                        </div>
                     </div>
-                    <IonLabel className="flex justify-center text-center mt-4">
-                        {profile?.displayName}
-                    </IonLabel>
                 </IonContent>
             )}
         </IonPage>

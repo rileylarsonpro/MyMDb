@@ -24,6 +24,8 @@ import * as selectors from '../../store/selectors';
 import { setSettings } from '../../store/actions';
 import EditProfilePicture from '../ui/EditProfilePicture';
 import ProfilePicture from '../ui/ProfilePicture';
+import EditBio from '../ui/EditBio';
+import EditBackgroundPhoto from '../ui/EditBackgroundPhoto';
 
 
 
@@ -31,6 +33,7 @@ const Settings = ({ history, profile, onDismiss, toast }) => {
   const settings = Store.useState(selectors.getSettings);
   const [settingsPage, setSettingsPage] = useState('Settings');
   const [displayName, setDisplayName] = useState(profile.displayName);
+  const [bio, setBio] = useState(profile.bio);
   async function signOut() {
     onDismiss(null, "cancel");
     await signOutOfFirebase.run();
@@ -54,7 +57,7 @@ const Settings = ({ history, profile, onDismiss, toast }) => {
           </IonButtons>
           <IonTitle>{settingsPage}</IonTitle>
           {settingsPage === 'Settings' && <IonButtons slot="end">
-            <IonButton onClick={() => onDismiss({ displayName }, "save")}>
+            <IonButton onClick={() => onDismiss({ displayName, bio }, "save")}>
               Save
             </IonButton>
           </IonButtons>}
@@ -91,11 +94,25 @@ const Settings = ({ history, profile, onDismiss, toast }) => {
               <IonLabel slot="start" >Display Name</IonLabel>
               <IonInput placeholder="Display Name" color="primary"value={displayName} onIonChange={(e) => setDisplayName(e.target.value)}/>
             </IonItem>
+            {/* edit bio */}
+            <IonItem button onClick={() => setSettingsPage('Edit Bio')}>
+              <IonLabel slot="start" >Bio</IonLabel>
+            </IonItem>
+            <IonItem button onClick={() => setSettingsPage('Edit Background')}>
+              <IonLabel slot="start">Background Photo</IonLabel>
+            </IonItem>
+
 
           </IonList>
         }
         {
           settingsPage === 'Edit Profile Picture' && <EditProfilePicture profile={profile} toast={toast} />
+        }
+        {
+          settingsPage === 'Edit Bio' && <EditBio bio={bio} setBio={setBio} toast={toast} />
+        }
+        {
+          settingsPage === 'Edit Background' && <EditBackgroundPhoto profile={profile} toast={toast} />
         }
       </IonContent>
     </IonPage>

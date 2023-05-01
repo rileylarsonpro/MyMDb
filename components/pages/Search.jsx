@@ -12,6 +12,9 @@ import {
 import SearchBar from '../ui/SearchBar.jsx';
 
 const Search = (props) => {
+  const onSelect = (result) => {
+    props.history.push(`/tabs/search/details/${result.media_type}/${result.id}`);
+  };
   return (
     <IonPage>
       <IonHeader translucent={true}>
@@ -25,7 +28,7 @@ const Search = (props) => {
             <IonTitle size="large">Search</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <SearchBar {...props}/>
+        <SearchBar onSelect={onSelect}/>
       </IonContent>
     </IonPage>
   );

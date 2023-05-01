@@ -12,6 +12,7 @@ import { getDetails } from '../../store/mediaStore';
 import LogTv from '../ui/LogTv';
 import LogMovie from '../ui/LogMovie';
 import Loading from '../ui/Loading';
+import Backdrop from '../ui/Backdrop';
 
 const Details = (props) => {
     const [finished, setFinished] = useState(false);
@@ -49,14 +50,7 @@ const Details = (props) => {
         <IonPage>
             <IonContent fullscreen={true}>
                 {details?.backdrop_path && (
-                    <div className="relative h-[35vh]">
-                        <div className="absolute bg-gradient-to-t from-background h-[35vh] w-full"></div>
-                        <IonImg
-                            className="absolute top-0 left-0  h-[35vh] -z-10 w-full object-cover object-top"
-                            src={`https://image.tmdb.org/t/p/${getImageSize()}${details?.backdrop_path}`}
-                            alt=""
-                        />
-                    </div>
+                    <Backdrop src={`https://image.tmdb.org/t/p/${getImageSize()}${details?.backdrop_path}`}/>
                 )}
                 <h1 className="w-100 text-center mx-6 mt-6">{details?.title || details?.name}</h1>
                 <IonGrid className="text-center">

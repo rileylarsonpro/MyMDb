@@ -224,3 +224,9 @@ h1 {
 .ion-content::part(scroll){
   overscroll-behavior: none;
 }
+
+.thin-bottom-border {
+  border-bottom-width: 1px;
+  border-bottom-color: var(--ion-color-step-100);
+  border-bottom-style: solid;
+}

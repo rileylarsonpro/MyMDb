@@ -5,25 +5,33 @@ import { tvOutline, happyOutline, ticketOutline } from 'ionicons/icons';
 import { searchMulti } from '../../store/mediaStore'
 
 
-const SearchBar = ({history}) => {
+const SearchBar = ({onSelect, placeholder = "Search"}) => {
   const [finished, result, updating] = searchMulti.useWatch({cacheBreakEnabled: true, ssr: false}); 
   const data = [];
   let [results, setResults] = useState([...data]);
 
   const handleChange = async (ev) => {
-    if(!ev.target.value) return;
+    if(!ev.target.value) {
+      setResults([]);
+      return;
+    }
     const query = ev.target.value;
     let res = await searchMulti.run({query});
     if (res.payload?.length > 0) setResults(res.payload);
   }
 
+  const selectAndClear = (result) => {
+    onSelect(result);
+    setResults([]);
+  }
+
   return (
     <>
-      <IonSearchbar debounce={500} onIonChange={(ev) => handleChange(ev)}></IonSearchbar>
+      <IonSearchbar placeholder={placeholder} debounce={500} onIonChange={(ev) => handleChange(ev)}></IonSearchbar>
 
       <IonList>
         { results.map((result,index) => (
-          <IonItem key={index} button detail={false} routerLink={`/tabs/search/details/${result.media_type}/${result.id}`}>
+          <IonItem key={index} button detail={false} onclick={() => selectAndClear(result)}>
             <IonThumbnail className="h-24 w-16 my-1.5 mr-3">
               { result.poster_path ? 
               <IonImg src={`https://image.tmdb.org/t/p/w154${result.poster_path}`} alt=""/> : 
