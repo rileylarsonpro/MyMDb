@@ -11,11 +11,12 @@ import { image, closeOutline } from 'ionicons/icons';
 import userApi from '../../api/user.api.js';
 import { getUserProfile } from '../../store/authStore.js';
 import Loading from './Loading';
+import ProfilePicture from './ProfilePicture';
 
 
 
 
-const EditProfilePicture = ({ profile }) => {
+const EditProfilePicture = ({ profile, toast }) => {
   const [currentFile, setCurrentFile] = useState(null);
   const [currentFileURL, setCurrentFileURL] = useState('');
   const [imageKey, setImageKey] = useState(0);
@@ -26,6 +27,10 @@ const EditProfilePicture = ({ profile }) => {
   function onFileInput(e) {
     if (!e.target.files[0]) return;
     const file = e.target.files[0];
+    if (!file.type.startsWith('image/')) {
+      toast.error('File must be an image');
+      return;
+    }
     setCurrentFile(file);
     let imageURL = URL.createObjectURL(file);
     setCurrentFileURL(imageURL);
@@ -64,9 +69,7 @@ const EditProfilePicture = ({ profile }) => {
   return (
     <>
       <div className="flex justify-center items-center text-center mt-4 pb-3">
-        {profile?.profilePicture && <IonAvatar className="w-32 h-32">
-          <IonImg key={imageKey} src={`${process.env.NEXT_PUBLIC_API_ORIGIN_NATIVE}/api/v1/user/file${profile.profilePicture}`} alt="" />
-        </IonAvatar>}
+        {profile && <ProfilePicture key={imageKey} profilePicture={profile.profilePicture} sizeClasses="h-32 w-32" />}
       </div>
       {uploading ? 
         <>
@@ -87,14 +90,13 @@ const EditProfilePicture = ({ profile }) => {
               <IonLabel slot="end">{(profile?.profilePicture === '') ? "Upload Profile Picture" : 'Replace Profile Picture'}</IonLabel>
             </IonButton>
             {profile?.profilePicture !== '' && <IonButton fill="outline" onClick={removeProfilePicture}>Remove</IonButton>}
-            <input className="ion-hide" type="file" onInput={onFileInput} id="file-input"
-              accept="image/png, image/jpeg" />
+            <input className="ion-hide" type="file" onInput={onFileInput} id="file-input" accept="image/*" />
           </div>
           {currentFileURL !== '' &&
               <div className="flex-col justify-center items-center m-6 p-4  border-2 border-solid border-current border-primary">
                   <div className='flex justify-center pb-3'><IonLabel className="text-center" color="primary">Profile Picture Preview</IonLabel></div>
                   <div className="flex justify-center items-center pb=3">
-                    <IonAvatar className="w-32 h-32">
+                    <IonAvatar className="w-32 h-32 border border-solid border-primary">
                       <IonImg id="myimage" src={currentFileURL} />
                     </IonAvatar>
                   </div>

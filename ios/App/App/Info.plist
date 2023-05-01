@@ -56,5 +56,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>You can take photos to document your job.</string>
 </dict>
 </plist>
