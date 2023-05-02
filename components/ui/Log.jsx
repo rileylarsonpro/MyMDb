@@ -26,9 +26,9 @@ const Log = ({ selectedType, selected, dismissModal }) => {
         if (selectedType !== 'episodes') return map;
         selected.forEach((episode) => {
             map.set(getEpisodeString(episode), {
-                tvEpisode: episode.episode_number,
-                tvSeason: episode.season_number,
-                tvShowId: episode.show_id,
+                episode: episode.episode_number,
+                season: episode.season_number,
+                tmdbShowId: episode.show_id,
                 id: getEpisodeString(episode),
                 dateWatched: new Date(),
                 rating: 0,
@@ -57,16 +57,16 @@ const Log = ({ selectedType, selected, dismissModal }) => {
         };
         if (selectedType === 'episodes') return null;
         if (selectedType === 'season') {
-            log.tvSeason = selected.season_number;
-            log.tvShowId = selected.show_id;
+            log.season = selected.season_number;
+            log.tmdbShowId = selected.show_id;
             log.id = `S${selected.season_number}`;
         }
         if (selectedType === 'show') {
-            log.tvShowId = selected.id;
+            log.tmdbShowId = selected.id;
             log.id = selected.id;
         }
         if (selectedType === 'movie') {
-            log.movieId = selected.id;
+            log.tmdbMovieId = selected.id;
             log.id = selected.id;
         }
         return log;
@@ -93,7 +93,7 @@ const Log = ({ selectedType, selected, dismissModal }) => {
         }
         if (selectedType === 'season') {
             await logSeason.run(log);
-            toast.success(`Season ${log.tvSeason} logged successfully`);
+            toast.success(`Season ${log.season} logged successfully`);
         }
         if (selectedType === 'show') {
             await logShow.run(log);
