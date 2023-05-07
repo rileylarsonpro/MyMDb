@@ -67,7 +67,7 @@ const Profile = ({ history }) => {
     return (
         <IonPage>
             <IonHeader>
-                <IonToolbar mode="ios">
+                <IonToolbar>
                     <IonButtons slot="start">
                         <IonButton onClick={() => openSettings()}>
                             <IonIcon icon={cogOutline} />
