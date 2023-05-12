@@ -8,12 +8,14 @@ import {
   IonLabel,
   IonList,
 } from '@ionic/react';
+import { useHistory } from 'react-router-dom';
 
 import SearchBar from '../ui/SearchBar.jsx';
 
 const Search = (props) => {
+  const history = useHistory();
   const onSelect = (result) => {
-    props.history.push(`/tabs/search/details/${result.media_type}/${result.id}`);
+    history.push(`/tabs/search/details/${result.media_type}/${result.id}`);
   };
   return (
     <IonPage>
@@ -28,7 +30,7 @@ const Search = (props) => {
             <IonTitle size="large">Search</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <SearchBar onSelect={onSelect}/>
+        <SearchBar onSelect={onSelect} clearOnSelect={false}/>
       </IonContent>
     </IonPage>
   );

@@ -24,7 +24,7 @@ import * as selectors from '../../store/selectors';
 import { setSettings } from '../../store/actions';
 import EditProfilePicture from '../ui/EditProfilePicture';
 import ProfilePicture from '../ui/ProfilePicture';
-import EditBio from '../ui/EditBio';
+import RichTextEditor from '../ui/RichTextEditor';
 import EditBackgroundPhoto from '../ui/EditBackgroundPhoto';
 
 
@@ -92,7 +92,7 @@ const Settings = ({ history, profile, onDismiss, toast }) => {
             {/* edit display name */}
             <IonItem button>
               <IonLabel slot="start" >Display Name</IonLabel>
-              <IonInput placeholder="Display Name" color="primary"value={displayName} onIonChange={(e) => setDisplayName(e.target.value)}/>
+              <IonInput placeholder="Display Name" color="primary" value={displayName} onIonChange={(e) => setDisplayName(e.target.value)}/>
             </IonItem>
             {/* edit bio */}
             <IonItem button onClick={() => setSettingsPage('Edit Bio')}>
@@ -109,7 +109,7 @@ const Settings = ({ history, profile, onDismiss, toast }) => {
           settingsPage === 'Edit Profile Picture' && <EditProfilePicture profile={profile} toast={toast} />
         }
         {
-          settingsPage === 'Edit Bio' && <EditBio bio={bio} setBio={setBio} toast={toast} />
+          settingsPage === 'Edit Bio' && <RichTextEditor html={bio} setHtml={setBio} toast={toast} id="bio" />
         }
         {
           settingsPage === 'Edit Background' && <EditBackgroundPhoto profile={profile} toast={toast} />

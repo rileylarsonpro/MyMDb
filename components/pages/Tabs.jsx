@@ -4,6 +4,7 @@ import { personOutline, flashOutline, list, search } from 'ionicons/icons';
 
 import Home from './Feed';
 import Lists from './Lists';
+import NewList from './NewList';
 import ListDetail from './ListDetail';
 import Details from './Details';
 import Profile from './Profile';
@@ -15,7 +16,8 @@ const Tabs = () => {
       <IonRouterOutlet>
         <Route path="/tabs/feed" render={() => <Home />} exact={true} />
         <Route path="/tabs/lists" render={() => <Lists />} exact={true} />
-        <Route path="/tabs/lists/:listId" render={() => <ListDetail />} exact={true} />
+        <Route path="/tabs/lists/new" render={() => <NewList />} exact={true} />
+        <Route path="/tabs/lists/details/:listId" render={() => <ListDetail />} exact={true} />
         <Route path="/tabs/profile" render={(props) => <Profile {...props}/>} exact={true} />
         <Route path="/tabs/search" render={(props) => <Search {...props} />} exact={true} />
         <Route path="/tabs/search/details/:mediaType/:id" render={(props) => <Details {...props} />} exact={true} />

@@ -1,23 +1,24 @@
 import ReactQuill from 'react-quill';
 
-const EditBio = ({ bio, setBio }) => {
-    const bioModules = {
-        toolbar: { container: '#toolbar-bio' },
+const RichTextEditor = ({ html, setHtml, id = 'editor' }) => {
+    let toolbarId = `toolbar-${id}`;
+    const htmlModules = {
+        toolbar: { container: `#${toolbarId}` },
     };
     const formats = ['bold', 'italic', 'underline', 'list', 'bullet', 'link'];
     return (
         <>
             <div className="p-3">
                 <ReactQuill
-                    id="bio"
+                    id={id}
                     theme="snow"
-                    value={bio}
-                    onChange={setBio}
+                    value={html}
+                    onChange={setHtml}
                     formats={formats}
-                    modules={bioModules}
+                    modules={htmlModules}
                     className="h-72"
                 />
-                <div id="toolbar-bio">
+                <div id={toolbarId}>
                     <button className="ql-bold">b</button>
                     <button className="ql-italic">i</button>
                     <button className="ql-underline">u</button>
@@ -30,4 +31,4 @@ const EditBio = ({ bio, setBio }) => {
     );
 };
 
-export default EditBio;
+export default RichTextEditor;

@@ -5,11 +5,9 @@ import { tvOutline, happyOutline, ticketOutline } from 'ionicons/icons';
 import { searchMulti } from '../../store/mediaStore'
 
 
-const SearchBar = ({onSelect, placeholder = "Search"}) => {
+const SearchBar = ({onSelect, placeholder = "Search", clearOnSelect = true}) => {
   const [finished, result, updating] = searchMulti.useWatch({cacheBreakEnabled: true, ssr: false}); 
-  const data = [];
-  let [results, setResults] = useState([...data]);
-
+  let [results, setResults] = useState([]);
   const handleChange = async (ev) => {
     if(!ev.target.value) {
       setResults([]);
@@ -22,7 +20,9 @@ const SearchBar = ({onSelect, placeholder = "Search"}) => {
 
   const selectAndClear = (result) => {
     onSelect(result);
-    setResults([]);
+    if (clearOnSelect) {
+      setResults([]);
+    }
   }
 
   return (
@@ -43,10 +43,10 @@ const SearchBar = ({onSelect, placeholder = "Search"}) => {
               <h3>{ result.title ? result.title : result.name } {result.release_date ? `(${result.release_date.substring(0,4)})` : '' }</h3>
               <p>{ result.overview }</p>
               <p>{ result.known_for && result.known_for.length > 0 && result.known_for.map((item, i) => (
-                <>
-                <span key={i}>{item.title ? item.title : item.name} {item.release_date ? `(${item.release_date.substring(0,4)})` : '' }</span>
-                <span>{i < result.known_for.length - 1 ? ', ' : ''}</span>
-                </>
+                <span key={i}>
+                  <span key={i}>{item.title ? item.title : item.name} {item.release_date ? `(${item.release_date.substring(0,4)})` : '' }</span>
+                  <span>{i < result.known_for.length - 1 ? ', ' : ''}</span>
+                </span>
               ))}</p>
             </IonLabel>
             { result.media_type === 'movie' && <IonIcon icon={ticketOutline} slot="end" /> }

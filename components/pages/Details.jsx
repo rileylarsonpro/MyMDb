@@ -6,6 +6,8 @@ import {
     IonCol,
     IonImg,
     IonChip,
+    IonButtons,
+    IonBackButton,
 } from '@ionic/react';
 import { useEffect, useState } from 'react';
 import { getDetails } from '../../store/mediaStore';
@@ -49,6 +51,9 @@ const Details = (props) => {
     return (
         <IonPage>
             <IonContent fullscreen={true}>
+                <IonButtons className="absolute left-2 top-2">
+                    <IonBackButton mode="md" className="bg-background rounded-full bg-opacity-25" defaultHref="/tabs/search" />
+                </IonButtons>
                 {details?.backdrop_path && (
                     <Backdrop src={`https://image.tmdb.org/t/p/${getImageSize()}${details?.backdrop_path}`}/>
                 )}

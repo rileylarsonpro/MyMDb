@@ -28,7 +28,7 @@ import {
     eyeOff,
 } from 'ionicons/icons';
 
-import ReactQuill from 'react-quill';
+import RichTextEditor from '../ui/RichTextEditor';
 import StarInput from '../ui/StarInput.jsx';
 
 const LogForm = ({
@@ -295,46 +295,10 @@ const LogForm = ({
                                     </>
                                 )}
                                 {modalSlot === 'reviewText' && (
-                                    <>
-                                        <ReactQuill
-                                            id={`review-${id}`}
-                                            theme="snow"
-                                            value={reviewText}
-                                            onChange={setReviewText}
-                                            formats={formats}
-                                            modules={reviewModules}
-                                            className="h-72"
-                                        />
-                                        <div id={`toolbar-${id}-review`}>
-                                            <button className="ql-bold">b</button>
-                                            <button className="ql-italic">i</button>
-                                            <button className="ql-underline">u</button>
-                                            <button className="ql-list" value="ordered"></button>
-                                            <button className="ql-list" value="bullet"></button>
-                                            <button className="ql-link">link</button>
-                                        </div>
-                                    </>
+                                    <RichTextEditor id={`review-${id}`} html={reviewText} setHtml={setReviewText} />
                                 )}
                                 {modalSlot === 'noteText' && (
-                                    <>
-                                        <ReactQuill
-                                            id={`note-${id}`}
-                                            theme="snow"
-                                            value={noteText}
-                                            onChange={setNoteText}
-                                            formats={formats}
-                                            modules={notesModules}
-                                            className="h-72"
-                                        />
-                                        <div id={`toolbar-${id}-notes`}>
-                                            <button className="ql-bold">b</button>
-                                            <button className="ql-italic">i</button>
-                                            <button className="ql-underline">u</button>
-                                            <button className="ql-list" value="ordered"></button>
-                                            <button className="ql-list" value="bullet"></button>
-                                            <button className="ql-link">link</button>
-                                        </div>
-                                    </>
+                                    <RichTextEditor id={`note-${id}`} html={noteText} setHtml={setNoteText} />
                                 )}
                             </div>
                         </IonContent>
