@@ -9,6 +9,6 @@ module.exports = {
         post(`/api/v1/list/custom`, body),
     updateCustomList: (id, body) =>
         put(`/api/v1/list/custom/${id}`, body),
-    deleteCustomList: (id) =>
-        destroy(`/api/v1/list/custom/${id}`),
+    deleteList: (id) =>
+        destroy(`/api/v1/list/${id}`),
 }

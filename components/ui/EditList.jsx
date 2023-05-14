@@ -13,6 +13,7 @@ import {
     IonIcon,
     IonInput,
     IonBackButton,
+    IonAlert
 } from '@ionic/react';
 
 import {
@@ -53,6 +54,7 @@ const EditList = ({
     const [tags, setTags] = useState(initTags);
     const [ranked, setRanked] = useState(initRanked);
     const [isPrivate, setIsPrivate] = useState(initIsPrivate);
+    const [isOpen, setIsOpen] = useState(false);
 
 
 
@@ -64,6 +66,14 @@ const EditList = ({
         setTags([]);
         setRanked(false);
         setIsPrivate(false);
+    };
+
+    const deleteList = async () => {
+        await listApi.deleteList(_id);
+        toast.success('List deleted successfully!');
+        history.push('/tabs/lists');
+        getUserLists.run();
+        clearState();
     };
 
     const submitCustomList = async (e) => {
@@ -98,7 +108,7 @@ const EditList = ({
     }, [listName, listItems]);
 
     return (
-        <IonPage>
+        <>
             <IonHeader>
                 <IonToolbar mode="ios">
                     <IonButtons slot="start">
@@ -182,9 +192,36 @@ const EditList = ({
                             </div>
                         </button>
                     </div>
+                    <div>
+                    <IonButton onClick={() => setIsOpen(true)} fill="outline" color="danger" expand="block"> Delete List </IonButton>
+                    <IonAlert
+                        isOpen={isOpen}
+                        header="Confirm Delete"
+                        subHeader="This action cannot be undone"
+                        message={'Are you sure you want to delete this list?'}
+                        trigger="present-alert"
+                        buttons={[
+                          {
+                            text: 'Cancel',
+                            role: 'cancel',
+                            handler: () => {
+                              setIsOpen(false);
+                            },
+                          },
+                          {
+                            text: 'OK',
+                            role: 'confirm',
+                            handler: () => {
+                            deleteList();
+                            },
+                          },
+                        ]}
+                        onDidDismiss={({ detail }) => {setIsOpen(false)}}
+                    ></IonAlert>
+                    </div>
                 </div>
             </IonContent>
-        </IonPage>
+        </>
     );
 };
 
