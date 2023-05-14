@@ -18,10 +18,14 @@ import {
 import { closeCircleOutline, ticketOutline, tvOutline, happyOutline } from 'ionicons/icons';
 
 import SearchBar from '../ui/SearchBar.jsx';
+import ListItemEntry from '../ui/ListItemEntry.jsx';
 
 import { ListItemTypes } from '../../utils/constants.js';
 import Star from '../ui/Star.jsx';
 import Poster from '../ui/Poster.jsx';
+
+
+
 
 const ManageListItems = ({
     listItems,
@@ -30,43 +34,36 @@ const ManageListItems = ({
     ranked = false,
 }) => {
     const [modalOpen, setModalOpen] = useState(false);
-    console.log(listItems);
     const modal = useRef(null);
     function addItem(details) {
         let newItem = {};
         let image = '/img/no-poster.svg';
         switch (details.media_type) {
             case 'movie':
-                image = details.poster_path
-                    ? `https://image.tmdb.org/t/p/w500${details.poster_path}`
-                    : '/img/no-poster.svg';
-                newItem = {
+                image = details.poster_path ?? '/img/no-poster.svg';
+                newItem.type = ListItemTypes.MOVIE;
+                newItem.movie = {
                     name: `${details.title} (${details.release_date.slice(0, 4)})`,
-                    image: image,
+                    poster: image,
                     tmdbMovieId: details.id,
-                    type: ListItemTypes.MOVIE,
                 };
                 break;
             case 'tv':
-                image = details.poster_path
-                    ? `https://image.tmdb.org/t/p/w500${details.poster_path}`
-                    : '/img/no-poster.svg';
-                newItem = {
+                image = details.poster_path ?? '/img/no-poster.svg';
+                newItem.type = ListItemTypes.TV_SHOW;
+                newItem.tvShow = {
                     name: `${details.name} (${details.first_air_date.slice(0, 4)})`,
-                    image: image,
+                    poster: image,
                     tmdbShowId: details.id,
-                    type: ListItemTypes.TV_SHOW,
                 };
                 break;
             case 'person':
-                image = details.profile_path
-                    ? `https://image.tmdb.org/t/p/w500${details.profile_path}`
-                    : '/img/no-poster.svg';
-                newItem = {
+                image = details.profile_path ?? '/img/no-poster.svg';
+                newItem.type = ListItemTypes.PERSON;
+                newItem.person = {
                     name: `${details.name}`,
-                    image: image,
+                    poster: image,
                     tmdbPersonId: details.id,
-                    type: ListItemTypes.PERSON,
                 };
                 break;
             default:
@@ -113,21 +110,7 @@ const ManageListItems = ({
                     <IonList lines="full">
                         {listItems.map((item, index) => (
                             <IonItem key={index}>
-                                {ranked && <div className="flex items-center" slot="start">
-                                    {index + 1}.
-                                </div>}
-                                <IonLabel><div className="text-sm">{item.name}</div></IonLabel>
-                                <div slot="end" className="text-primary">
-                                    {item.type === ListItemTypes.MOVIE && (
-                                        <IonIcon icon={ticketOutline} size="large"/>
-                                    )}
-                                    {item.type === ListItemTypes.TV_SHOW && (
-                                        <IonIcon icon={tvOutline} size="large"/>
-                                    )}
-                                    {item.type === ListItemTypes.PERSON && (
-                                        <IonIcon icon={happyOutline} size="large"/>
-                                    )}
-                                </div>
+                                 <ListItemEntry list={{ranked: ranked}} item={item} index={index} editing={true}/>
                             </IonItem>
                         ))}
                     </IonList>
@@ -168,55 +151,8 @@ const ManageListItems = ({
                                                 >
                                                     <IonIcon icon={closeCircleOutline} />
                                                 </IonButton>
-                                                <Poster src={item.image} ranked={ranked} index={index} wrapperClasses="ml-0"/>
                                             </div>
-                                            <div className="flex flex-col justify-between h-full">
-                                                <div>
-                                                    <div className="mr-2 mt-1">
-                                                        {item.type === ListItemTypes.MOVIE && (
-                                                            <div className="text-primary flex items-center">
-                                                                <div className="pr-1 mt-1">
-                                                                    {' '}
-                                                                    <IonIcon
-                                                                        icon={ticketOutline}
-                                                                    />{' '}
-                                                                </div>
-                                                                <div> Movie</div>
-                                                            </div>
-                                                        )}
-                                                        {item.type === ListItemTypes.TV_SHOW && (
-                                                            <div className="text-primary flex items-center">
-                                                                <div className="pr-1 mt-1">
-                                                                    {' '}
-                                                                    <IonIcon
-                                                                        icon={tvOutline}
-                                                                    />{' '}
-                                                                </div>
-                                                                <div> TV Show</div>
-                                                            </div>
-                                                        )}
-                                                        {item.type === ListItemTypes.PERSON && (
-                                                            <div className="text-primary flex items-center">
-                                                                <div className="pr-1 mt-1">
-                                                                    {' '}
-                                                                    <IonIcon
-                                                                        icon={happyOutline}
-                                                                    />{' '}
-                                                                </div>
-                                                                <div> Person</div>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                    <div className="text-sm line-clamp-2">
-                                                        {item.name}
-                                                    </div>
-                                                </div>
-                                                {/*TODO: rating out of 10*/}
-                                                <div className="flex items-center text-primary">
-                                                    <Star filled="true" classes="h-5 w-5 mr-1" />{' '}
-                                                    {randomNumber1to10()}
-                                                </div>
-                                            </div>
+                                            <ListItemEntry list={{ranked: ranked}} item={item} index={index} editing={true}/>
                                             <IonReorder slot="end" />
                                         </IonItem>
                                     ))}

@@ -17,6 +17,7 @@ import {
 import userApi from '../api/user.api.js';
 
 export const authStore = new Store({
+    firebaseUser: null,
     user: null,
     loggedIn: false,
 });
@@ -39,14 +40,17 @@ export const getFirebaseUser = createAsyncAction(
         return errorResult('No user');
     },
     {
-        postActionHook: ({ result }) => {
+        postActionHook: async ({ result }) => {
             if (result.payload?.user) {
+                let { data: user } = await userApi.getUserProfile();
                 authStore.update((s) => {
-                    s.user = result.payload.user;
+                    s.firebaseUser = result.payload.user;
+                    if (user) s.user = user;
                     s.loggedIn = true;
                 });
             } else {
                 authStore.update((s) => {
+                    s.firebaseUser = null;
                     s.user = null;
                     s.loggedIn = false;
                 });

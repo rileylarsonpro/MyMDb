@@ -10,17 +10,18 @@ import {
     IonPage,
     IonTitle,
     IonToolbar,
+    IonButton
 } from '@ionic/react';
 import { useParams } from 'react-router-dom';
 
-// import Store from '../../store';
-// import * as actions from '../../store/actions';
-// import * as selectors from '../../store/selectors';
+import AuthStore from '../../store/authStore';
+import * as selectors from '../../store/selectors';
 
 import { useState, useEffect } from 'react';
 import { getList } from '../../store/listStore';
 import Loading from '../ui/Loading';
 import ListItemEntry from '../ui/ListItemEntry';
+import EditList from '../ui/EditList';
 
 import { ListItemTypes } from '../../utils/constants.js';
 
@@ -37,12 +38,12 @@ const ListItems = ({ list }) => {
 };
 
 const ListDetail = ({ match }) => {
-    // const lists = Store.useState(selectors.getLists);
+    const currentUser = AuthStore.useState(selectors.getUser);
     const params = useParams();
-    // const loadedList = lists.find(l => l.id === listId);
     const { listId } = params;
     const [started, finished, result, updating] = getList.useWatch();
     const [loadedList, setLoadedList] = useState(null);
+    const [editing, setEditing] = useState(false);
     useEffect(() => {
         async function listInit() {
             let response = await getList.run(listId);
@@ -58,12 +59,16 @@ const ListDetail = ({ match }) => {
     }
     return (
         <IonPage>
+          {!editing ? <>
             <IonHeader>
                 <IonToolbar>
                     <IonButtons slot="start">
                         <IonBackButton defaultHref="/tabs/lists" />
                     </IonButtons>
                     <IonTitle>List</IonTitle>
+                    {currentUser._id === loadedList.list.userId._id && <IonButtons slot="end">
+                        <IonButton onClick={() => setEditing(true)}>Edit</IonButton>
+                    </IonButtons>}
                 </IonToolbar>
             </IonHeader>
             <IonContent>
@@ -91,6 +96,12 @@ const ListDetail = ({ match }) => {
                 </div>
                 <ListItems list={loadedList} />
             </IonContent>
+            </>
+            :
+            <>
+              <EditList {...loadedList.list} listItems={loadedList.listItems} editing={true} backLink={`/tabs/lists/details/${loadedList.list._id}`}/>
+            </>
+          }
         </IonPage>
     );
 };
