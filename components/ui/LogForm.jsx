@@ -30,6 +30,7 @@ import {
 
 import RichTextEditor from '../ui/RichTextEditor';
 import StarInput from '../ui/StarInput.jsx';
+import AddTags from '../ui/AddTags.jsx';
 
 const LogForm = ({
     id,
@@ -43,7 +44,6 @@ const LogForm = ({
     containsSpoilers: initContainsSpoilers,
     isRewatch: initIsRewatch,
     handleChange,
-    tagOptions,
 }) => {
     const [dateWatched, setDateWatched] = useState(initDateWatched);
     const [rating, setRating] = useState(initRating);
@@ -51,7 +51,6 @@ const LogForm = ({
     const [reviewText, setReviewText] = useState(initReviewText);
     const [noteText, setNoteText] = useState(initNoteText);
     const [tags, setTags] = useState(initTags);
-    const [tagSearch, setTagSearch] = useState('');
     const [isPrivate, setIsPrivate] = useState(initIsPrivate);
     const [modalOpen, setModalOpen] = useState(false);
     const [containsSpoilers, setContainsSpoilers] = useState(initContainsSpoilers);
@@ -91,18 +90,6 @@ const LogForm = ({
         isRewatch,
         tags,
     ]);
-    function addTagsButtonClicked(e) {
-        e.preventDefault();
-        setModalTitle('Add Tags');
-        setModalSlot('tags');
-        setModalOpen(true);
-
-        // wait for modal to open
-        setTimeout(() => {
-            let searchElement = document.getElementById(`tag-search-${id}`);
-            searchElement.querySelector('input').focus();
-        }, 500);
-    }
     function addReviewText(e) {
         e.preventDefault();
         setModalTitle('Add Review');
@@ -125,25 +112,6 @@ const LogForm = ({
             input.querySelector('.ql-editor').focus();
         }, 500);
     }
-
-    function addTag(tagName) {
-        let searchElement = document.getElementById(`tag-search-${id}`);
-        if (tagName === '') return;
-        if (tags.includes(tagName)) {
-            searchElement.value = '';
-            return;
-        }
-        setTags((prevTags) => [...prevTags, tagName]);
-        searchElement.value = '';
-    }
-    function removeTag(index) {
-        let newTags = [...tags];
-        newTags.splice(index, 1);
-        setTags(newTags);
-    }
-    const filteredTagOptions = useMemo(() => {
-        return tagOptions.filter((tag) => tag.name.toLowerCase().includes(tagSearch.toLowerCase()));
-    }, [tagSearch, tagOptions]);
 
     return (
         <>
@@ -220,17 +188,7 @@ const LogForm = ({
                     </div>
                 </div>
                 <div className="mt-2 pt-2">
-                    <IonButton onClick={addTagsButtonClicked} size="small" fill="outline"> Add Tags</IonButton>
-                    <div className="flex overflow-x-auto py-1 h-14">
-                        {tags.map((tag, index) => (
-                            <button onClick={() => removeTag(index)} key={index}>
-                                <IonChip color="primary">
-                                    <IonLabel className="whitespace-nowrap">{tag}</IonLabel>
-                                    <IonIcon color="primary" size="small" icon={closeOutline} />
-                                </IonChip>
-                            </button>
-                        ))}
-                    </div>
+                    <AddTags tags={tags} setTags={setTags} />
 
 
                     <IonModal ref={modal} isOpen={modalOpen}>
@@ -252,48 +210,6 @@ const LogForm = ({
                                 </IonToolbar>
                             </IonHeader>
                             <div className="p-3">
-                                {modalSlot === 'tags' && (
-                                    <>
-                                        <div className="flex overflow-x-auto pt-1 h-12">
-                                            {tags.map((tag, index) => (
-                                                <button onClick={() => removeTag(index)} key={index}>
-                                                    <IonChip color="primary">
-                                                        <IonLabel className="whitespace-nowrap">
-                                                            {tag}
-                                                        </IonLabel>
-                                                        <IonIcon
-                                                            color="primary"
-                                                            size="small"
-                                                            icon={closeOutline}
-                                                        />
-                                                    </IonChip>
-                                                </button>
-                                            ))}
-                                        </div>
-                                        <IonSearchbar
-                                            id={`tag-search-${id}`}
-                                            className="outline-input"
-                                            placeholder="Find or create a tag"
-                                            onKeyPress={(e) => {
-                                                e.key === 'Enter' &&
-                                                    addTag(e.target.value.toLowerCase().trim());
-                                            }}
-                                            onIonChange={(e) =>
-                                                setTagSearch(e.target.value.toLowerCase().trim())
-                                            }
-                                        ></IonSearchbar>
-                                        <IonList>
-                                            {filteredTagOptions.map((tag, index) => (
-                                                <IonItem
-                                                    key={index}
-                                                    button
-                                                    onClick={() => addTag(tag.name)}>
-                                                    <IonLabel>{tag.name}</IonLabel>
-                                                </IonItem>
-                                            ))}
-                                        </IonList>
-                                    </>
-                                )}
                                 {modalSlot === 'reviewText' && (
                                     <RichTextEditor id={`review-${id}`} html={reviewText} setHtml={setReviewText} />
                                 )}

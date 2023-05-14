@@ -17,6 +17,6 @@ export const getUserTags = createAsyncAction(async () => {
         return successResult(data);
     } catch (e) {
         console.log(e);
-        return errorResult([], "Log episodes failed");
+        return errorResult([], "Get user tags failed");
     }
 });

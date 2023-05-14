@@ -90,9 +90,13 @@ Log
 
 
 Tasks
-Add back button to search tab stack.
 Add auto detect rewatch 
 Fix duplicate tag bug
+Pull ratings for lists to display while making lists (right now its random)
+Give warning to user if they are adding something to a list multiple times
+Add way to add episodes and seasons to lists
+Make descriptions longer for episodes on logging screen 
+
 
 
 &copy; Riley Larson 2023

@@ -3,7 +3,7 @@ import { IonItem, IonList, IonSearchbar, IonLabel, IonThumbnail, IonImg, IonIcon
 import { tvOutline, happyOutline, ticketOutline } from 'ionicons/icons';
 
 import { searchMulti } from '../../store/mediaStore'
-
+import Poster from '../ui/Poster';
 
 const SearchBar = ({onSelect, placeholder = "Search", clearOnSelect = true}) => {
   const [finished, result, updating] = searchMulti.useWatch({cacheBreakEnabled: true, ssr: false}); 
@@ -32,13 +32,7 @@ const SearchBar = ({onSelect, placeholder = "Search", clearOnSelect = true}) => 
       <IonList>
         { results.map((result,index) => (
           <IonItem key={index} button detail={false} onclick={() => selectAndClear(result)}>
-            <IonThumbnail className="h-24 w-16 my-1.5 mr-3">
-              { result.poster_path ? 
-              <IonImg src={`https://image.tmdb.org/t/p/w154${result.poster_path}`} alt=""/> : 
-              result.profile_path ?
-              <IonImg src={`https://image.tmdb.org/t/p/w154${result.profile_path}`} alt=""/> :
-              <IonImg src="/img/no-poster.svg" alt=""/>}
-            </IonThumbnail>
+            <Poster src={result.poster_path ? `https://image.tmdb.org/t/p/w154${result.poster_path}` :  result.profile_path ? `https://image.tmdb.org/t/p/w154${result.profile_path}` : '/img/no-poster.svg'} />
             <IonLabel>
               <h3>{ result.title ? result.title : result.name } {result.release_date ? `(${result.release_date.substring(0,4)})` : '' }</h3>
               <p>{ result.overview }</p>

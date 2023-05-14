@@ -51,7 +51,7 @@ const Details = (props) => {
     return (
         <IonPage>
             <IonContent fullscreen={true}>
-                <IonButtons className="absolute left-2 top-2">
+                <IonButtons className="absolute left-2 top-8">
                     <IonBackButton mode="md" className="bg-background rounded-full bg-opacity-25" defaultHref="/tabs/search" />
                 </IonButtons>
                 {details?.backdrop_path && (

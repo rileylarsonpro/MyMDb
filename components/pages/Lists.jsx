@@ -1,6 +1,7 @@
 import Store from '../../store';
 import * as selectors from '../../store/selectors';
 
+import { useState, useEffect } from 'react';
 import {
   IonPage,
   IonHeader,
@@ -15,21 +16,40 @@ import {
   IonIcon,
 } from '@ionic/react';
 
+import Loading from '../ui/Loading';
+import ListPreview from '../ui/ListPreview';
 import { add } from 'ionicons/icons';
 
-const ListEntry = ({ list, ...props }) => (
-  <IonItem routerLink={`/tabs/lists/${list.id}`} className="list-entry">
-    <IonLabel>{list.name}</IonLabel>
-  </IonItem>
-);
+import {getUserLists} from '../../store/listStore';
 
 const AllLists = ({ onSelect }) => {
-  const lists = Store.useState(selectors.getLists);
+  //const lists = Store.useState(selectors.getLists); // how to get lists from store?
+  const [started, finished, result, updating] = getUserLists.useWatch();
+  const [lists, setLists] = useState([]);
+  useEffect(() => {
+      async function profileInit() {
+          let response = await getUserLists.run();
+          if (response.payload) {
+              setLists(response.payload);
+          }
+      }
+      profileInit();
+  }, []);
+
+  useEffect(() => {
+    if (finished && result.payload) {
+        setLists(result.payload);
+    }
+  }, [finished]);
+
+  if (!finished) {
+    return <Loading />;
+  }
 
   return (
     <>
       {lists.map((list, i) => (
-        <ListEntry list={list} key={i} />
+        <ListPreview list={list} key={i} />
       ))}
     </>
   );
@@ -52,11 +72,6 @@ const Lists = () => {
         <IonHeader collapse="condense">
           <IonToolbar>
             <IonTitle size="large">Lists</IonTitle>
-            {/* <IonButtons slot="end">
-              <IonButton routerLink="/tabs/lists/new">
-                <IonIcon slot="icon-only" icon={add} />
-              </IonButton>
-            </IonButtons> */}
           </IonToolbar>
         </IonHeader>
         <IonList>

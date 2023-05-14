@@ -1,6 +1,6 @@
 import ReactQuill from 'react-quill';
 
-const RichTextEditor = ({ html, setHtml, id = 'editor' }) => {
+const RichTextEditor = ({ html, setHtml, id = 'editor', style = 'h-72' }) => {
     let toolbarId = `toolbar-${id}`;
     const htmlModules = {
         toolbar: { container: `#${toolbarId}` },
@@ -16,7 +16,7 @@ const RichTextEditor = ({ html, setHtml, id = 'editor' }) => {
                     onChange={setHtml}
                     formats={formats}
                     modules={htmlModules}
-                    className="h-72"
+                    className={style}
                 />
                 <div id={toolbarId}>
                     <button className="ql-bold">b</button>

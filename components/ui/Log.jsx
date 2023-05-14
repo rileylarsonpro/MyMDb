@@ -11,7 +11,6 @@ import {
 import LogForm from './LogForm.jsx';
 
 import { logEpisode, logSeason, logShow, logMovie } from '../../store/logStore.js';
-import { getUserTags } from '../../store/tagStore.js';
 import { useToast } from '../useToast.tsx';
 
 function getEpisodeString(episode) {
@@ -20,7 +19,6 @@ function getEpisodeString(episode) {
 
 const Log = ({ selectedType, selected, dismissModal }) => {
     const toast = useToast();
-    const [tagOptions, setTagOptions] = useState([]);
     const [logs, setLogs] = useState(() => {
         let map = new Map();
         if (selectedType !== 'episodes') return map;
@@ -72,16 +70,6 @@ const Log = ({ selectedType, selected, dismissModal }) => {
         return log;
     });
 
-
-    useEffect(() => {
-        async function tagOptionsInit() {
-            let response = await getUserTags.run();
-            if (response.payload && response.payload.length > 0) {
-                setTagOptions(response.payload);
-            }
-        }
-        tagOptionsInit();
-    }, []);
     async function submit() {
         if (selectedType === 'episodes') {
             let logArray = [];
@@ -143,7 +131,6 @@ const Log = ({ selectedType, selected, dismissModal }) => {
                                     <IonList slot="content" className="mb-4">
                                         <LogForm
                                             {...logs.get(episodeString)}
-                                            tagOptions={tagOptions}
                                             handleChange={handleChange}
                                         />
                                     </IonList>
@@ -165,7 +152,6 @@ const Log = ({ selectedType, selected, dismissModal }) => {
                     </IonItem>
                     <LogForm
                         {...log}
-                        tagOptions={tagOptions}
                         handleChange={handleChange}
                     />
                     <IonButton expand="block" className="mt-4" onClick={() => submit()}>
@@ -177,7 +163,6 @@ const Log = ({ selectedType, selected, dismissModal }) => {
                 <div className="pb-80">
                     <LogForm
                         {...log}
-                        tagOptions={tagOptions}
                         handleChange={handleChange}
                     />
                     <IonButton expand="block" className="mt-4" onClick={() => submit()}>
