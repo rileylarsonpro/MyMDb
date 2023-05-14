@@ -96,6 +96,10 @@ Pull ratings for lists to display while making lists (right now its random)
 Give warning to user if they are adding something to a list multiple times
 Add way to add episodes and seasons to lists
 Make descriptions longer for episodes on logging screen 
+Update Lists
+Delete Lists 
+Private List vs Public Lists
+Add User data to global state
 
 
 

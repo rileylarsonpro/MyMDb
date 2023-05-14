@@ -12,6 +12,8 @@ import {
     IonIcon,
 } from '@ionic/react';
 
+import {lockClosed} from 'ionicons/icons';
+
 import Poster from '../ui/Poster';
 import { ListItemTypes } from '../../utils/constants.js';
 
@@ -23,13 +25,17 @@ const MoviePreview = ({ movie, ...props }) => (
 
 const ListPreview = ({ list, ...props }) => {
     let remaining = list.listCount - list.listItems.length;
-    console.log('REMAINING', remaining);
     return (
         <IonItem lines="full" detail="false" routerLink={`/tabs/lists/details/${list._id}`}>
             <div className="h-full w-full py-2">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center">
-                        <div className="text-sm line-clamp-2">{list.name}</div>
+                        <div className="text-sm line-clamp-2 font-bold">{list.name}</div>
+                        {list.isPrivate && (
+                            <div className="ml-2 mt-1">
+                                <IonIcon icon={lockClosed} />
+                            </div>
+                        )}
                     </div>
                     <div className="text-primary text-right text-xs w-14 mr-2">{list.listCount} item{list.itemCount === 1 ? '' : 's'}</div>
                 </div>

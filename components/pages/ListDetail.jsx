@@ -24,6 +24,8 @@ import ListItemEntry from '../ui/ListItemEntry';
 
 import { ListItemTypes } from '../../utils/constants.js';
 
+import ProfilePicture from '../ui/ProfilePicture';
+
 const ListItems = ({ list }) => {
     return (
         <IonList lines="full">
@@ -71,6 +73,9 @@ const ListDetail = ({ match }) => {
                           <h2 className="text-lg font-bold">{loadedList.list.name}</h2>
                         </div>
                         <div className="text-primary text-right text-xs w-16">{loadedList.listItems.length} item{loadedList.listItems.length === 1 ? '' : 's'}</div>
+                    </div>
+                    <div className="text-sm text-primary">
+                      by {loadedList.list.userId.displayName}
                     </div>
                     {loadedList?.list?.description && (
                         <div className="ql-snow display-only line-clamp-3 overflow-auto text-xs">
