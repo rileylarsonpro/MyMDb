@@ -42,7 +42,7 @@ export const getFirebaseUser = createAsyncAction(
     {
         postActionHook: async ({ result }) => {
             if (result.payload?.user) {
-                let { data: user } = await userApi.getUserProfile();
+                let { data: user } = await userApi.getUser();
                 authStore.update((s) => {
                     s.firebaseUser = result.payload.user;
                     if (user) s.user = user;

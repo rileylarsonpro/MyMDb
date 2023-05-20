@@ -14,14 +14,9 @@ import {
 
 import {lockClosed} from 'ionicons/icons';
 
-import Poster from '../ui/Poster';
 import { ListItemTypes } from '../../utils/constants.js';
 
-const MoviePreview = ({ movie, ...props }) => (
-    <div>
-        <Poster src={`https://image.tmdb.org/t/p/w154${movie.poster}`} wrapperClasses="mx-1" />
-    </div>
-);
+import MoviePreview from '../ui/MoviePreview.jsx';
 
 const ListPreview = ({ list, ...props }) => {
     let remaining = list.listCount - list.listItems.length;

@@ -11,9 +11,9 @@ import mediaApi from '../api/media.api.js';
 
 
 
-export const searchMulti = createAsyncAction(async ({ query }) => {
+export const searchMulti = createAsyncAction(async ({ query, itemType }) => {
     try {
-        let { data } = await mediaApi.searchMulti(query);
+        let { data } = await mediaApi.searchMulti(itemType, query);
         return successResult(data);
     } catch (e) {
         console.log(e);

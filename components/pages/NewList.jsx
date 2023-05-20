@@ -37,7 +37,7 @@ const Lists = () => {
                                 className="mb-4"
                                 fill="outline"
                                 expand="block"
-                                onClick={() => setListType('regular')}
+                                onClick={() => setListType('CUSTOM')}
                             >
                                 Regular List
                             </IonButton>

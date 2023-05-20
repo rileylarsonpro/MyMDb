@@ -26,6 +26,7 @@ import EditProfilePicture from '../ui/EditProfilePicture';
 import ProfilePicture from '../ui/ProfilePicture';
 import RichTextEditor from '../ui/RichTextEditor';
 import EditBackgroundPhoto from '../ui/EditBackgroundPhoto';
+import EditProfileLists from '../ui/EditProfileLists';
 
 
 
@@ -101,6 +102,9 @@ const Settings = ({ history, profile, onDismiss, toast }) => {
             <IonItem button onClick={() => setSettingsPage('Edit Background')}>
               <IonLabel slot="start">Background Photo</IonLabel>
             </IonItem>
+            <IonItem button onClick={() => setSettingsPage('Edit Profile Lists')}>
+              <IonLabel slot="start">Profile Lists</IonLabel>
+            </IonItem>
 
 
           </IonList>
@@ -113,6 +117,9 @@ const Settings = ({ history, profile, onDismiss, toast }) => {
         }
         {
           settingsPage === 'Edit Background' && <EditBackgroundPhoto profile={profile} toast={toast} />
+        }
+        {
+          settingsPage === 'Edit Profile Lists' && <EditProfileLists profile={profile} toast={toast} />
         }
       </IonContent>
     </IonPage>

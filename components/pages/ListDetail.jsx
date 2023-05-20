@@ -17,7 +17,7 @@ import { useParams } from 'react-router-dom';
 import AuthStore from '../../store/authStore';
 import * as selectors from '../../store/selectors';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { getList } from '../../store/listStore';
 import Loading from '../ui/Loading';
 import ListItemEntry from '../ui/ListItemEntry';
@@ -54,6 +54,13 @@ const ListDetail = ({ match }) => {
         listInit();
     }, []);
 
+    let showEditButton = useMemo(() => {
+        if (currentUser._id === loadedList?.list?.userId._id && !loadedList?.list?.listType.includes('FAVORITE')) {
+            return true;
+        }
+        return false;
+    }, [currentUser, loadedList]);
+
     if (!loadedList) {
         return <Loading />;
     }
@@ -66,7 +73,7 @@ const ListDetail = ({ match }) => {
                         <IonBackButton defaultHref="/tabs/lists" />
                     </IonButtons>
                     <IonTitle>List</IonTitle>
-                    {currentUser._id === loadedList.list.userId._id && <IonButtons slot="end">
+                    {showEditButton && <IonButtons slot="end">
                         <IonButton onClick={() => setEditing(true)}>Edit</IonButton>
                     </IonButtons>}
                 </IonToolbar>

@@ -14,6 +14,7 @@ import {
     IonThumbnail,
     IonReorder,
     IonReorderGroup,
+    useIonModal,
 } from '@ionic/react';
 import { closeCircleOutline, ticketOutline, tvOutline, happyOutline } from 'ionicons/icons';
 
@@ -25,16 +26,15 @@ import Star from '../ui/Star.jsx';
 import Poster from '../ui/Poster.jsx';
 
 
-
-
-const ManageListItems = ({
+const ManageListItemsModal = ({
     listItems,
     setListItems,
-    modalTitle = 'Editing Entries',
-    ranked = false,
+    modalTitle,
+    ranked,
+    maxItems,
+    itemType,
+    onDismiss = () => {},
 }) => {
-    const [modalOpen, setModalOpen] = useState(false);
-    const modal = useRef(null);
     function addItem(details) {
         let newItem = {};
         let image = '/img/no-poster.svg';
@@ -83,10 +83,81 @@ const ManageListItems = ({
         newItems.splice(event.detail.to, 0, listItems[event.detail.from]);
         setListItems(newItems);
     }
-    // TODO - remove this function
-    function randomNumber1to10() {
-        return Math.floor(Math.random() * 10) + 1;
-    }
+    return (
+        <IonContent fullscreen={true}>
+        <IonHeader>
+            <IonToolbar mode="ios">
+                <IonTitle>{modalTitle}</IonTitle>
+                <IonButtons slot="end">
+                    <IonButton
+                        onClick={(e) => {
+                            onDismiss();
+                        }}
+                    >
+                        Done
+                    </IonButton>
+                </IonButtons>
+            </IonToolbar>
+        </IonHeader>
+                       
+            {maxItems && listItems.length >= maxItems ? (
+                <div className="flex justify-center p-3 text-center">
+                    A maximum of {maxItems} entries can be added to this list.
+                </div>
+                ) : (
+                <SearchBar
+                    onSelect={addItem}
+                    clearOnSelect={true}
+                    placeholder="Add entry..."
+                    itemType={itemType}
+                />
+            )}
+            <IonList lines="full">
+                <IonReorderGroup disabled={false} onIonItemReorder={itemMoved}>
+                    {listItems.map((item, index) => (
+                        <IonItem key={index}>
+                            <div className="flex items-center">
+                                <IonButton
+                                    onClick={() => removeItem(index)}
+                                    fill="clear"
+                                    color="danger"
+                                    slot="start"
+                                >
+                                    <IonIcon icon={closeCircleOutline} />
+                                </IonButton>
+                            </div>
+                            <ListItemEntry list={{ranked: ranked}} item={item} index={index} editing={true}/>
+                            <IonReorder slot="end" />
+                        </IonItem>
+                    ))}
+                </IonReorderGroup>
+            </IonList>
+    </IonContent>
+    )
+};
+
+
+
+const ManageListItems = ({
+    listItems,
+    setListItems,
+    modalTitle = 'Editing Entries',
+    ranked = false,
+    maxItems = null,
+    itemType = 'multi',
+}) => {
+    const [present, dismiss] = useIonModal(ManageListItemsModal, {
+        listItems,
+        setListItems,
+        modalTitle,
+        ranked,
+        maxItems,
+        itemType,
+        onDismiss: () => dismiss(),
+    });
+    let openModal = () => {
+        present();
+    };
     return (
         <>
                 {/*display*/}
@@ -95,9 +166,7 @@ const ManageListItems = ({
                         fill="outline"
                         expand="block"
                         onClick={(e) => {
-                            e.preventDefault();
-                            setModalOpen(true);
-                            modal.current?.present();
+                            openModal();
                         }}
                     >
                         {' '}
@@ -115,51 +184,6 @@ const ManageListItems = ({
                         ))}
                     </IonList>
                 </div>
-                <IonModal ref={modal} isOpen={modalOpen}>
-                    <IonContent fullscreen={true}>
-                        <IonHeader>
-                            <IonToolbar mode="ios">
-                                <IonTitle>{modalTitle}</IonTitle>
-                                <IonButtons slot="end">
-                                    <IonButton
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            setModalOpen(false);
-                                            modal.current?.dismiss();
-                                        }}
-                                    >
-                                        Done
-                                    </IonButton>
-                                </IonButtons>
-                            </IonToolbar>
-                        </IonHeader>
-                            <SearchBar
-                                onSelect={addItem}
-                                clearOnSelect={true}
-                                placeholder="Add entry..."
-                            />
-                            <IonList lines="full">
-                                <IonReorderGroup disabled={false} onIonItemReorder={itemMoved}>
-                                    {listItems.map((item, index) => (
-                                        <IonItem key={index}>
-                                            <div className="flex items-center">
-                                                <IonButton
-                                                    onClick={() => removeItem(index)}
-                                                    fill="clear"
-                                                    color="danger"
-                                                    slot="start"
-                                                >
-                                                    <IonIcon icon={closeCircleOutline} />
-                                                </IonButton>
-                                            </div>
-                                            <ListItemEntry list={{ranked: ranked}} item={item} index={index} editing={true}/>
-                                            <IonReorder slot="end" />
-                                        </IonItem>
-                                    ))}
-                                </IonReorderGroup>
-                            </IonList>
-                    </IonContent>
-                </IonModal>
         </>
     );
 };

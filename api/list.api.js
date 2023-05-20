@@ -11,4 +11,6 @@ module.exports = {
         put(`/api/v1/list/custom/${id}`, body),
     deleteList: (id) =>
         destroy(`/api/v1/list/${id}`),
+    updateFavoritesList: (listType, body) =>
+        put(`/api/v1/list/favorite/${listType}`, body),
 }

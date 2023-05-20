@@ -25,6 +25,7 @@ import userApi from '../../api/user.api.js';
 import { useToast } from '../useToast.tsx';
 import {formatTimestamp} from '../../utils/functions.js';
 import Backdrop from '../ui/Backdrop.jsx';
+import FavoritesPreview from '../ui/FavoritesPreview.jsx';
 
 const Profile = ({ history }) => {
     const toast = useToast();
@@ -108,6 +109,12 @@ const Profile = ({ history }) => {
                             <div className='text-xs text-center'>{formatTimestamp(profile?.createdAt)}</div>
                         </div>
                     </div>
+                    <div>
+                    {profile?.favoriteLists.map((list, i) => (
+                        <FavoritesPreview list={list.list} listItems={list.listItems} key={i} />
+                    ))}
+                    </div>
+
                 </IonContent>
             )}
         </IonPage>
