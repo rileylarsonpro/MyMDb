@@ -1,7 +1,7 @@
 # MyMDb
 
 ## Overview
-This project is basically my version of Letterboxd for TV. I am going to use Ionic, Vue, and Capacitor. To make an App that can log movies and TV shows. I understand apps like TV Time and Serializd exist but I think it will be a fun personal project and give me more web experience with mobile first design and mobile app development. 
+This project is basically my version of Letterboxd for TV. I am going to use Ionic, React/Next.js, and Capacitor. To make an App that can log movies and TV shows. I understand apps like TV Time and Serializd exist but I think it will be a fun personal project and give me more web experience with mobile first design and mobile app development. 
 
 # Domain Driven Design
 
