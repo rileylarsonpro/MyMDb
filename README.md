@@ -1,7 +1,7 @@
 # MyMDb
 
 ## Overview
-This project is basically my version of Letterboxd for TV. I am going to use Ionic, React/Next.js, and Capacitor. To make an App that can log movies and TV shows. I understand apps like TV Time and Serializd exist but I think it will be a fun personal project and give me more web experience with mobile first design and mobile app development. 
+This project is my version of Letterboxd (my favorite app) with extra features. I use Ionic, React/Next.js, and Capacitor. To make an App that can log movies and TV shows and make movie lists with extra privacy options. The goal is to give me more web experience with react, mobile first design and mobile app development. 
 
 # Domain Driven Design
 
@@ -103,4 +103,4 @@ Add User data to global state
 
 
 
-&copy; Riley Larson 2023
+&copy; Riley Larson 2024
