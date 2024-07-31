@@ -8,4 +8,4 @@ xcuserdata
 # Cordova plugins for Capacitor
 capacitor-cordova-ios-plugins
 
-Appp/App/GoogleService-Info.plist
+App/App/GoogleService-Info.plist
